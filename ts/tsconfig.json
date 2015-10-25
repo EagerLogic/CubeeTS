@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "none",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "out": "../public_html/cubee.js",
+        "sourceMap": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "declaration": true,
+        "target": "es5"
+    },
+    
+    
+    
+    "files": [
+        "cubee.ts"
+    ]
+}

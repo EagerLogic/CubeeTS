@@ -1,0 +1,8 @@
+{
+    "name": "CubeeTS",
+    "version": "0.1.0",
+    "keywords": ["typescript", "ui"],
+    "author": "David Ipacs",
+    "contributors": [],
+    "dependencies": {}
+}
