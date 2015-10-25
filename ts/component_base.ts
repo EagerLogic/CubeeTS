@@ -357,7 +357,7 @@ module cubee {
          */
         constructor(rootElement: HTMLElement) {
             this._element = rootElement;
-            this._element.style.boxSizing = "content-box";
+            this._element.style.boxSizing = "border-box";
             this._element.setAttribute("draggable", "false");
             this._element.style.position = "absolute";
             this._element.style.outlineStyle = "none";
