@@ -31,7 +31,7 @@ declare module cubee {
         static Instance: EventQueue;
         private queue;
         private timer;
-        private EventQueue();
+        constructor();
         invokeLater(task: {
             (): void;
         }): void;
@@ -178,13 +178,13 @@ declare module cubee {
         private _bidirectionalChangeListenerThis;
         private _bidirectionalChangeListenerOther;
         private _id;
+        private bindListener;
         constructor(_value?: T, _nullable?: boolean, _readonly?: boolean, _validator?: IValidator<T>);
         id: string;
         valid: boolean;
         value: T;
         nullable: boolean;
         readonly: boolean;
-        private bindListener();
         initReadonlyBind(readonlyBind: IProperty<T>): void;
         private get();
         private set(newValue);
@@ -300,6 +300,8 @@ declare module cubee {
     }
     class BooleanProperty extends Property<boolean> {
     }
+    class ColorProperty extends Property<Color> {
+    }
 }
 declare module cubee {
     interface IStyle {
@@ -311,6 +313,8 @@ declare module cubee {
     class Color {
         private static _TRANSPARENT;
         static TRANSPARENT: Color;
+        private static _BLACK;
+        static BLACK: Color;
         static getArgbColor(argb: number): Color;
         static getArgbColorByComponents(alpha: number, red: number, green: number, blue: number): Color;
         static getRgbColor(rgb: number): Color;
@@ -393,6 +397,70 @@ declare module cubee {
         inner: boolean;
         apply(element: HTMLElement): void;
     }
+    class ETextOverflow implements IStyle {
+        private _css;
+        private static _CLIP;
+        private static _ELLIPSIS;
+        static CLIP: ETextOverflow;
+        static ELLIPSIS: ETextOverflow;
+        constructor(_css: string);
+        CSS: string;
+        apply(element: HTMLElement): void;
+    }
+    class ETextAlign implements IStyle {
+        private _css;
+        private static _LEFT;
+        private static _CENTER;
+        private static _RIGHT;
+        private static _JUSTIFY;
+        static LEFT: ETextAlign;
+        static CENTER: ETextAlign;
+        static RIGHT: ETextAlign;
+        static JUSTIFY: ETextAlign;
+        constructor(_css: string);
+        CSS: string;
+        apply(element: HTMLElement): void;
+    }
+    class EHAlign {
+        private _css;
+        private static _LEFT;
+        private static _CENTER;
+        private static _RIGHT;
+        static LEFT: EHAlign;
+        static CENTER: EHAlign;
+        static RIGHT: EHAlign;
+        constructor(_css: string);
+        CSS: string;
+    }
+    class EVAlign {
+        private _css;
+        private static _TOP;
+        private static _MIDDLE;
+        private static _BOTTOM;
+        static TOP: EVAlign;
+        static MIDDLE: EVAlign;
+        static BOTTOM: EVAlign;
+        constructor(_css: string);
+        CSS: string;
+    }
+    class FontFamily implements IStyle {
+        private _css;
+        private static _arial;
+        static Arial: FontFamily;
+        private static initialized;
+        private static initFontContainerStyle();
+        static registerFont(name: string, src: string, extra: string): void;
+        constructor(_css: string);
+        CSS: string;
+        apply(element: HTMLElement): void;
+    }
+    class ECursor {
+        private _css;
+        private static auto;
+        static AUTO: ECursor;
+        constructor(_css: string);
+        css: string;
+    }
 }
 declare module cubee {
     interface IRunnable {
@@ -407,13 +475,6 @@ declare module cubee {
     }
 }
 declare module cubee {
-    class ECursor {
-        private _css;
-        private static auto;
-        static AUTO: ECursor;
-        constructor(_css: string);
-        css: string;
-    }
     class LayoutChildren {
         private parent;
         private children;
@@ -426,6 +487,17 @@ declare module cubee {
         get(index: number): AComponent;
         indexOf(component: AComponent): number;
         size(): number;
+    }
+}
+declare module cubee {
+    class MouseEventTypes {
+        static MOUSE_DOWN: number;
+        static MOUSE_MOVE: number;
+        static MOUSE_UP: number;
+        static MOUSE_ENTER: number;
+        static MOUSE_LEAVE: number;
+        static MOUSE_WHEEL: number;
+        constructor();
     }
     abstract class AComponent {
         private _translateX;
@@ -529,14 +601,14 @@ declare module cubee {
         boundsLeft: number;
         BoundsTop: NumberProperty;
         boundsTop: number;
-        MinWidth: NumberProperty;
-        minWIdth: number;
-        MinHeight: NumberProperty;
-        minHeight: number;
-        MaxWidth: NumberProperty;
-        maxWidth: number;
-        MaxHeight: NumberProperty;
-        maxHeight: number;
+        protected MinWidth: NumberProperty;
+        protected minWidth: number;
+        protected MinHeight: NumberProperty;
+        protected minHeight: number;
+        protected MaxWidth: NumberProperty;
+        protected maxWidth: number;
+        protected MaxHeight: NumberProperty;
+        protected maxHeight: number;
         protected setPosition(left: number, top: number): void;
         _setLeft(left: number): void;
         _setTop(top: number): void;
@@ -589,10 +661,12 @@ declare module cubee {
         Pressed: Property<boolean>;
         pressed: boolean;
     }
+}
+declare module cubee {
     abstract class ALayout extends AComponent {
         private _children;
         constructor(element: HTMLElement);
-        children: LayoutChildren;
+        protected children_inner: LayoutChildren;
         abstract _onChildAdded(child: AComponent): void;
         abstract _onChildRemoved(child: AComponent, index: number): void;
         abstract _onChildrenCleared(): void;
@@ -605,6 +679,8 @@ declare module cubee {
         protected setChildLeft(child: AComponent, left: number): void;
         protected setChildTop(child: AComponent, top: number): void;
     }
+}
+declare module cubee {
     abstract class AUserControl extends ALayout {
         private _width;
         private _height;
@@ -612,6 +688,28 @@ declare module cubee {
         private _shadow;
         private _draggable;
         constructor();
+        protected _Width: NumberProperty;
+        protected Width: NumberProperty;
+        protected width: number;
+        protected _Height: NumberProperty;
+        protected Height: NumberProperty;
+        protected height: number;
+        protected _Background: BackgroundProperty;
+        protected Background: BackgroundProperty;
+        protected background: ABackground;
+        protected _Shadow: Property<BoxShadow>;
+        protected Shadow: Property<BoxShadow>;
+        protected shadow: BoxShadow;
+        Draggable: BooleanProperty;
+        draggable: boolean;
+        _onChildAdded(child: AComponent): void;
+        _onChildRemoved(child: AComponent, index: number): void;
+        _onChildrenCleared(): void;
+        protected onLayout(): void;
+    }
+}
+declare module cubee {
+    class Panel extends AUserControl {
         Width: NumberProperty;
         width: number;
         Height: NumberProperty;
@@ -620,25 +718,106 @@ declare module cubee {
         background: ABackground;
         Shadow: Property<BoxShadow>;
         shadow: BoxShadow;
-        Draggable: BooleanProperty;
-        draggable: boolean;
+        children: LayoutChildren;
+    }
+}
+declare module cubee {
+    class HBox extends ALayout {
+        private _height;
+        private _cellWidths;
+        private _hAligns;
+        private _vAligns;
+        constructor();
+        setCellWidth(indexOrComponent: number | AComponent, cellHeight: number): void;
+        getCellWidth(indexOrComponent: number | AComponent): number;
+        setCellHAlign(indexOrComponent: number | AComponent, hAlign: EHAlign): void;
+        getCellHAlign(indexOrComponent: number | AComponent): EHAlign;
+        setCellVAlign(indexOrComponent: number | AComponent, vAlign: EVAlign): void;
+        getCellVAlign(indexOrComponent: number | AComponent): EVAlign;
+        setLastCellHAlign(hAlign: EHAlign): void;
+        setLastCellVAlign(vAlign: EVAlign): void;
+        setLastCellWidth(width: number): void;
+        addEmptyCell(width: number): void;
+        _onChildAdded(child: AComponent): void;
+        _onChildRemoved(child: AComponent, index: number): void;
+        _onChildrenCleared(): void;
+        protected onLayout(): void;
+        private setInList<T>(list, index, value);
+        private getFromList<T>(list, index);
+        private removeFromList<T>(list, index);
+        children: LayoutChildren;
+        Height: NumberProperty;
+        height: number;
+    }
+}
+declare module cubee {
+    class VBox extends ALayout {
+        private _width;
+        private _cellHeights;
+        private _hAligns;
+        private _vAligns;
+        constructor();
+        children: LayoutChildren;
+        setCellHeight(indexOrComponent: number | AComponent, cellHeight: number): void;
+        private setInList<T>(list, index, value);
+        private getFromList<T>(list, index);
+        private removeFromList<T>(list, index);
+        getCellHeight(indexOrComponent: number | AComponent): number;
+        setCellHAlign(indexOrComponent: number | AComponent, hAlign: EHAlign): void;
+        getCellHAlign(indexOrComponent: number | AComponent): EHAlign;
+        setCellVAlign(indexOrComponent: number | AComponent, vAlign: EVAlign): void;
+        getCellVAlign(indexOrComponent: number | AComponent): EVAlign;
+        setLastCellHAlign(hAlign: EHAlign): void;
+        setLastCellVAlign(vAlign: EVAlign): void;
+        setLastCellHeight(height: number): void;
+        addEmptyCell(height: number): void;
+        Width: NumberProperty;
+        width: number;
         _onChildAdded(child: AComponent): void;
         _onChildRemoved(child: AComponent, index: number): void;
         _onChildrenCleared(): void;
         protected onLayout(): void;
     }
-    class MouseEventTypes {
-        static MOUSE_DOWN: number;
-        static MOUSE_MOVE: number;
-        static MOUSE_UP: number;
-        static MOUSE_ENTER: number;
-        static MOUSE_LEAVE: number;
-        static MOUSE_WHEEL: number;
-        constructor();
-    }
 }
 declare module cubee {
-    class Panel extends AUserControl {
+    class Label extends AComponent {
+        private _width;
+        private _height;
+        private _text;
+        private _textOverflow;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        TextOverflow: Property<ETextOverflow>;
+        textOverflow: ETextOverflow;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
     }
 }
 declare module cubee {

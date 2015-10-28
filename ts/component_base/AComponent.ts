@@ -1,120 +1,17 @@
-/// <reference path="utils.ts"/>
-/// <reference path="events.ts"/>
-/// <reference path="properties.ts"/>
-
 module cubee {
+    
+    export class MouseEventTypes {
 
-    //    export interface INativeEventListener {
-    //        (event: UIEvent): any;
-    //    }
+        public static MOUSE_DOWN = 0;
+        public static MOUSE_MOVE = 1;
+        public static MOUSE_UP = 2;
+        public static MOUSE_ENTER = 3;
+        public static MOUSE_LEAVE = 4;
+        public static MOUSE_WHEEL = 5;
 
-    class MouseDownEventLog {
-        constructor(
-            public component: AComponent,
-            public screenX: number,
-            public screenY: number,
-            public x: number,
-            public y: number,
-            public timestamp: number = Date.now()) { }
+        constructor() { }
+
     }
-
-    export class ECursor {
-
-        private static auto = new ECursor("auto");
-        static get AUTO() {
-            return ECursor.auto;
-        }
-
-        constructor(private _css: string) { }
-
-        get css() {
-            return this._css;
-        }
-    }
-
-    export class LayoutChildren {
-        private children: AComponent[] = [];
-
-        constructor(private parent: ALayout) {
-            this.parent = parent;
-        }
-
-        add(component: AComponent) {
-            if (component != null) {
-                if (component.parent != null) {
-                    throw "The component is already a child of a layout.";
-                }
-                component._setParent(this.parent);
-                component.onParentChanged.fireEvent(new ParentChangedEventArgs(this.parent, component));
-            }
-
-            this.children.push(component);
-            this.parent._onChildAdded(component);
-        }
-
-        insert(index: number, component: AComponent) {
-            if (component != null) {
-                if (component.parent != null) {
-                    throw "The component is already a child of a layout.";
-                }
-            }
-
-            var newChildren: AComponent[] = [];
-            this.children.forEach((child) => {
-                newChildren.push(child);
-            });
-            newChildren.splice(index, 0, component);
-
-            // TODO VERY INEFECTIVE
-            this.clear();
-
-            newChildren.forEach((child) => {
-                this.add(child);
-            });
-        }
-
-        removeComponent(component: AComponent) {
-            var idx = this.children.indexOf(component);
-            if (idx < 0) {
-                throw "The given component isn't a child of this layout.";
-            }
-            this.removeIndex(idx);
-        }
-
-        removeIndex(index: number) {
-            var removedComponent: AComponent = this.children[index];
-            if (removedComponent != null) {
-                removedComponent._setParent(null);
-                removedComponent.onParentChanged.fireEvent(new ParentChangedEventArgs(null, removedComponent));
-            }
-            this.parent._onChildRemoved(removedComponent, index);
-        }
-
-        clear() {
-            this.children.forEach((child) => {
-                if (child != null) {
-                    child._setParent(null);
-                    child.onParentChanged.fireEvent(new ParentChangedEventArgs(null, child));
-                }
-            });
-            this.children = [];
-            this.parent._onChildrenCleared();
-        }
-
-        get(index: number) {
-            return this.children[index]
-        }
-
-        indexOf(component: AComponent) {
-            return this.children.indexOf(component);
-        }
-
-        size() {
-            return this.children.length;
-        }
-    }
-
-
 
     export abstract class AComponent {
 
@@ -814,43 +711,43 @@ module cubee {
             this.BoundsTop.value = value;
         }
 
-        get MinWidth() {
+        protected get MinWidth() {
             return this._minWidth;
         }
-        get minWIdth() {
+        protected get minWidth() {
             return this.MinWidth.value;
         }
-        set minWIdth(value) {
+        protected set minWidth(value) {
             this.MinWidth.value = value;
         }
 
-        get MinHeight() {
+        protected get MinHeight() {
             return this._minHeight;
         }
-        get minHeight() {
+        protected get minHeight() {
             return this.MinHeight.value;
         }
-        set minHeight(value) {
+        protected set minHeight(value) {
             this.MinHeight.value = value;
         }
 
-        get MaxWidth() {
+        protected get MaxWidth() {
             return this._maxWidth;
         }
-        get maxWidth() {
+        protected get maxWidth() {
             return this.MaxWidth.value;
         }
-        set maxWidth(value) {
+        protected set maxWidth(value) {
             this.MaxWidth.value = value;
         }
 
-        get MaxHeight() {
+        protected get MaxHeight() {
             return this._maxHeight;
         }
-        get maxHeight() {
+        protected get maxHeight() {
             return this.MaxHeight.value;
         }
-        set maxHeight(value) {
+        protected set maxHeight(value) {
             this.MaxHeight.value = value;
         }
 
@@ -1312,317 +1209,6 @@ module cubee {
         
     }
 
-    export abstract class ALayout extends AComponent {
-        private _children = new LayoutChildren(this);
-
-        constructor(element: HTMLElement) {
-            super(element);
-        }
-
-        get children() {
-            return this._children;
-        }
-
-        public abstract _onChildAdded(child: AComponent): void;
-
-        public abstract _onChildRemoved(child: AComponent, index: number): void;
-
-        public abstract _onChildrenCleared(): void;
-
-        layout() {
-            this._needsLayout = false;
-            for (var i = 0; i < this.children.size(); i++) {
-                let child = this.children.get(i);
-                if (child != null) {
-                    if (child.needsLayout) {
-                        child.layout();
-                    }
-                }
-            }
-            this.onLayout();
-            this.measure();
-        }
-
-        public _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, type: number, button: number, event: MouseEvent) {
-            if (!this.handlePointer) {
-                return false;
-            }
-            if (!this.enabled) {
-                return true;
-            }
-            if (!this.visible) {
-                return false;
-            }
-            if (this.onPointerEventClimbingUp(screenX, screenY, x, y, wheelVelocity, altPressed,
-                ctrlPressed, shiftPressed, metaPressed, type, button)) {
-                for (var i = this._children.size() - 1; i >= 0; i--) {
-                    let child = this._children.get(i);
-                    if (child != null) {
-                        let parentX = x + this.element.scrollLeft;
-                        let parentY = y + this.element.scrollTop;
-                        let p = this.padding;
-                        if (p != null) {
-                            parentX -= p.left;
-                            parentY -= p.top;
-                        }
-                        if (child._isIntersectsPoint(parentX, parentY)) {
-                            let left = child.left + child.translateX;
-                            let top = child.top + child.translateY;
-                            let tcx = (left + child.measuredWidth * child.transformCenterX) | 0;
-                            let tcy = (top + child.measuredHeight * child.transformCenterY) | 0;
-                            let childPoint = this._rotatePoint(tcx, tcy, parentX, parentY, -child.rotate);
-                            let childX = childPoint.x;
-                            let childY = childPoint.y;
-                            childX = childX - left;
-                            childY = childY - top;
-                            // TODO scale back point
-                            if (child._doPointerEventClimbingUp(screenX, screenY, childX, childY, wheelVelocity,
-                                altPressed, ctrlPressed, shiftPressed, metaPressed, type, button, event)) { 
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            if (this.pointerTransparent) {
-                return false;
-            } else {
-                return this.onPointerEventFallingDown(screenX, screenY, x, y, wheelVelocity, altPressed,
-                    ctrlPressed, shiftPressed, metaPressed, type, button, event);
-            }
-
-        }
-
-        private _rotatePoint(cx: number, cy: number, x: number, y: number, angle: number) {
-            angle = (angle * 360) * (Math.PI / 180);
-            x = x - cx;
-            y = y - cy;
-            var sin = Math.sin(angle);
-            var cos = Math.cos(angle);
-            var rx = ((cos * x) - (sin * y)) | 0;
-            var ry = ((sin * x) + (cos * y)) | 0;
-            rx = rx + cx;
-            ry = ry + cy;
-
-            return new Point2D(rx, ry);
-        }
-
-        protected abstract onLayout(): void;
-
-        getComponentsAtPosition(x: number, y: number) {
-            var res: AComponent[] = [];
-            this.getComponentsAtPosition_impl(this, x, y, res);
-            return res;
-        }
-
-        private getComponentsAtPosition_impl(root: ALayout, x: number, y: number, result: AComponent[]) {
-            if (x >= 0 && x <= root.boundsWidth && y >= 0 && y <= root.boundsHeight) {
-                result.splice(0, 0, root);
-                for (var i = 0; i < root.children.size(); i++) {
-                    let component = root.children.get(i);
-                    if (component == null) {
-                        continue;
-                    }
-                    let tx = x - component.left - component.translateX;
-                    let ty = y - component.top - component.translateY;
-                    if (component instanceof ALayout) {
-                        let l: ALayout;
-                        this.getComponentsAtPosition_impl(<ALayout>component, tx, ty, result);
-                    } else {
-                        if (tx >= 0 && tx <= component.boundsWidth && y >= 0 && y <= component.boundsHeight) {
-                            result.splice(0, 0, component);
-                        }
-                    }
-                }
-            }
-        }
-
-        protected setChildLeft(child: AComponent, left: number) {
-            child._setLeft(left);
-        }
-
-        protected setChildTop(child: AComponent, top: number) {
-            child._setTop(top);
-        }
-    }
-
-    export abstract class AUserControl extends ALayout {
-
-        private _width = new NumberProperty(null, true, false);
-        private _height = new NumberProperty(null, true, false);
-        private _background = new BackgroundProperty(new ColorBackground(Color.TRANSPARENT), true, false);
-        private _shadow = new Property<BoxShadow>(null, true, false);
-        private _draggable = new BooleanProperty(false);
-
-        constructor() {
-            super(document.createElement("div"));
-            this.element.style.overflowX = "hidden";
-            this.element.style.overflowY = "hidden";
-            this._width.addChangeListener(() => {
-                if (this._width.value == null) {
-                    this.element.style.removeProperty("width");
-                } else {
-                    this.element.style.width = "" + this._width.value + "px";
-                }
-                this.requestLayout();
-            });
-            this._width.invalidate();
-            this._height.addChangeListener(() => {
-                if (this._height.value == null) {
-                    this.element.style.removeProperty("height");
-                } else {
-                    this.element.style.height = "" + this._height.value + "px";
-                }
-                this.requestLayout();
-            });
-            this._height.invalidate();
-            this._background.addChangeListener(() => {
-                this.element.style.removeProperty("backgroundColor");
-                this.element.style.removeProperty("backgroundImage");
-                this.element.style.removeProperty("background");
-                if (this._background.value != null) {
-                    this._background.value.apply(this.element);
-                }
-            });
-            this._background.invalidate();
-            this._shadow.addChangeListener(() => {
-                if (this._shadow.value == null) {
-                    this.element.style.removeProperty("boxShadow");
-                } else {
-                    this._shadow.value.apply(this.element);
-                }
-            });
-            this._draggable.addChangeListener(() => {
-                if (this._draggable.value) {
-                    this.element.setAttribute("draggable", "true");
-                } else {
-                    this.element.setAttribute("draggable", "false");
-                }
-            });
-            this._draggable.invalidate();
-        }
-
-        get Width() {
-            return this._width;
-        }
-        get width() {
-            return this.Width.value;
-        }
-        set width(value) {
-            this.Width.value = value;
-        }
-
-        get Height() {
-            return this._height;
-        }
-        get height() {
-            return this.Height.value;
-        }
-        set height(value) {
-            this.Height.value = value;
-        }
-
-        get Background() {
-            return this._background;
-        }
-        get background() {
-            return this.Background.value;
-        }
-        set background(value) {
-            this.Background.value = value;
-        }
-
-        get Shadow() {
-            return this._shadow;
-        }
-        get shadow() {
-            return this.Shadow.value;
-        }
-        set shadow(value) {
-            this.Shadow.value = value;
-        }
-
-        get Draggable() {
-            return this._draggable;
-        }
-        get draggable() {
-            return this.Draggable.value;
-        }
-        set draggable(value) {
-            this.Draggable.value = value;
-        }
-
-        public _onChildAdded(child: AComponent) {
-            if (child != null) {
-                this.element.appendChild(child.element);
-            }
-            this.requestLayout();
-        }
-
-        public _onChildRemoved(child: AComponent, index: number) {
-            if (child != null) {
-                this.element.removeChild(child.element);
-            }
-            this.requestLayout();
-        }
-
-        public _onChildrenCleared() {
-            var root = this.element;
-            var e = this.element.firstElementChild;
-            while (e != null) {
-                root.removeChild(e);
-                e = root.firstElementChild;
-            }
-            this.requestLayout();
-        }
-
-        protected onLayout() {
-            if (this.width != null && this.height != null) {
-                this.setSize(this.width, this.height);
-            } else {
-                var maxW = 0;
-                var maxH = 0;
-                for (var i = 0; i < this.children.size(); i++) {
-                    let component = this.children.get(i);
-                    let cW = component.boundsWidth + component.boundsLeft + component.translateX;
-                    let cH = component.boundsHeight + component.boundsTop + component.translateY;
-
-                    if (cW > maxW) {
-                        maxW = cW;
-                    }
-
-                    if (cH > maxH) {
-                        maxH = cH;
-                    }
-                }
-
-                if (this.width != null) {
-                    maxW = this.height;
-                }
-
-                if (this.height != null) {
-                    maxH = this.height;
-                }
-
-                this.setSize(maxW, maxH);
-            }
-        }
-
-    }
-
-    export class MouseEventTypes {
-
-        public static MOUSE_DOWN = 0;
-        public static MOUSE_MOVE = 1;
-        public static MOUSE_UP = 2;
-        public static MOUSE_ENTER = 3;
-        public static MOUSE_LEAVE = 4;
-        public static MOUSE_WHEEL = 5;
-
-        constructor() { }
-
-    }
-
 }
+
 

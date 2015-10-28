@@ -21,6 +21,11 @@ module cubee {
             return Color._TRANSPARENT;
         }
 
+        private static _BLACK = Color.getArgbColor(0xff000000);
+        static get BLACK() {
+            return Color._BLACK;
+        }
+
         public static getArgbColor(argb: number): Color {
             return new Color(argb);
         }
@@ -308,6 +313,182 @@ module cubee {
             + this._color.toCSS() + (this._inner ? " inset" : "");
         }
 
+    }
+
+    export class ETextOverflow implements IStyle {
+
+        private static _CLIP = new ETextOverflow("clip");
+        private static _ELLIPSIS = new ETextOverflow("ellipsis");
+
+        static get CLIP() {
+            return ETextOverflow._CLIP;
+        }
+
+        static get ELLIPSIS() {
+            return ETextOverflow._ELLIPSIS;
+        }
+
+        constructor(private _css: string) {
+        }
+
+        get CSS() {
+            return this._css;
+        }
+
+        apply(element: HTMLElement) {
+            element.style.textOverflow = this._css;
+        }
+
+    }
+
+    export class ETextAlign implements IStyle {
+
+        private static _LEFT = new ETextAlign("left");
+        private static _CENTER = new ETextAlign("center");
+        private static _RIGHT = new ETextAlign("right");
+        private static _JUSTIFY = new ETextAlign("justify");
+
+        static get LEFT() {
+            return ETextAlign._LEFT;
+        }
+
+        static get CENTER() {
+            return ETextAlign._CENTER;
+        }
+
+        static get RIGHT() {
+            return ETextAlign._RIGHT;
+        }
+
+        static get JUSTIFY() {
+            return ETextAlign._JUSTIFY;
+        }
+
+        constructor(private _css: string) {
+        }
+
+        get CSS() {
+            return this._css;
+        }
+
+        apply(element: HTMLElement) {
+            element.style.textAlign = this._css;
+        }
+
+    }
+
+    export class EHAlign {
+
+        private static _LEFT = new EHAlign("left");
+        private static _CENTER = new EHAlign("center");
+        private static _RIGHT = new EHAlign("right");
+
+        static get LEFT() {
+            return EHAlign._LEFT;
+        }
+
+        static get CENTER() {
+            return EHAlign._CENTER;
+        }
+
+        static get RIGHT() {
+            return EHAlign._RIGHT;
+        }
+
+        constructor(private _css: string) {
+        }
+
+        get CSS() {
+            return this._css;
+        }
+
+    }
+
+    export class EVAlign {
+
+        private static _TOP = new EVAlign("top");
+        private static _MIDDLE = new EVAlign("middle");
+        private static _BOTTOM = new EVAlign("bottom");
+
+        static get TOP() {
+            return EVAlign._TOP;
+        }
+
+        static get MIDDLE() {
+            return EVAlign._MIDDLE;
+        }
+
+        static get BOTTOM() {
+            return EVAlign._BOTTOM;
+        }
+
+        constructor(private _css: string) {
+        }
+
+        get CSS() {
+            return this._css;
+        }
+
+    }
+
+    export class FontFamily implements IStyle {
+        
+        private static _arial = new FontFamily("Arial, Helvetica, sans-serif");
+        public static get Arial() {
+            return FontFamily._arial;
+        }
+
+        private static initialized = false;
+
+        private static initFontContainerStyle() {
+            var wnd: any = window;
+            wnd.fontsStyle = document.createElement("style");
+            wnd.fontsStyle.type = "text/css";
+            var doc: any = document;
+            doc.getElementsByTagName("head")[0].appendChild(wnd.fontsStyle);
+        }
+
+        public static registerFont(name: string, src: string, extra: string) {
+            var ex = extra;
+            if (ex == null) {
+                ex = '';
+            }
+            var ct = "@font-face {font-family: '" + name + "'; src: url('" + src + "');" + ex + "}";
+            var ih = (<any>window).fontsStyle.innerHTML;
+            if (ih == null) {
+                ih = '';
+            }
+            (<any>window).fontsStyle.innerHTML = ih + ct;
+        }
+
+        constructor(private _css: string) {
+            if (!FontFamily.initialized) {
+                FontFamily.initFontContainerStyle();
+            }
+        }
+
+        get CSS() {
+            return this._css;
+        }
+
+        apply(element: HTMLElement) {
+            element.style.fontFamily = this._css;
+        }
+
+    }
+
+    export class ECursor {
+
+        private static auto = new ECursor("auto");
+        static get AUTO() {
+            return ECursor.auto;
+        }
+
+        constructor(private _css: string) { }
+
+        get css() {
+            return this._css;
+        }
     }
 
 }

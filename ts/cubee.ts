@@ -2,8 +2,17 @@
 /// <reference path="events.ts"/>
 /// <reference path="properties.ts"/>
 /// <reference path="styles.ts"/>
-/// <reference path="component_base.ts"/>
-/// <reference path="components.ts"/> 
+/// <reference path="component_base/LayoutChildren.ts"/> 
+/// <reference path="component_base/AComponent.ts"/> 
+/// <reference path="component_base/ALayout.ts"/> 
+/// <reference path="component_base/AUserControl.ts"/> 
+
+/// <reference path="layouts/Panel.ts"/>  
+/// <reference path="layouts/Hbox.ts"/>   
+/// <reference path="layouts/Vbox.ts"/>    
+   
+/// <reference path="components/Label.ts"/>  
+
 /// <reference path="popups.ts"/> 
 
 module cubee {                

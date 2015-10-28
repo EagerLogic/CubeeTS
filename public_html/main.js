@@ -3,13 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-/// <reference path="cubee.d.ts"/> 
+/// <reference path="cubee.d.ts"/>
 function start() {
     var div = document.getElementById("cubeePanel");
     var cp = new cubee.CubeePanel(div);
-    var p = new cubee.Panel();
-    p.width = 200;
-    p.height = 100;
-    p.background = new cubee.ColorBackground(cubee.Color.getRgbColor(0xff4000));
-    cp.rootComponent = p;
+    var vb = new cubee.HBox();
+    vb.children.add(createP(cubee.Color.getRgbColor(0xff0000)));
+    vb.children.add(createP(cubee.Color.getRgbColor(0x00ff00)));
+    vb.children.add(createP(cubee.Color.getRgbColor(0x0000ff)));
+    cp.rootComponent = vb;
+}
+function createP(color) {
+    var res = new cubee.Panel();
+    res.width = 200;
+    res.height = 100;
+    res.background = new cubee.ColorBackground(color);
+    return res;
 }

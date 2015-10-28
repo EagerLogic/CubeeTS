@@ -45,6 +45,9 @@ module cubee {
         private _bidirectionalChangeListenerThis: IChangeListener;
         private _bidirectionalChangeListenerOther: IChangeListener;
         private _id: string = "p" + Property._nextId++;
+        private bindListener = () => {
+                    this.invalidateIfNeeded();
+                };
 
         constructor(
             private _value?: T,
@@ -72,7 +75,7 @@ module cubee {
         }
 
         get value() {
-            return this._value;
+            return this.get();
         }
 
         set value(newValue: T) {
@@ -85,10 +88,6 @@ module cubee {
 
         get readonly() {
             return this._readonly;
-        }
-
-        private bindListener() {
-            this.invalidateIfNeeded();
         }
 
         initReadonlyBind(readonlyBind: IProperty<T>) {
@@ -349,410 +348,414 @@ module cubee {
         }
 
         addChangeListener(listener: IChangeListener) {
-        if (listener == null) {
-            throw "The listener parameter can not be null.";
+            if (listener == null) {
+                throw "The listener parameter can not be null.";
+            }
+
+            if (this.hasChangeListener(listener)) {
+                return;
+            }
+
+            this._changeListeners.push(listener);
+
+            let x = this.value;
         }
 
-        if (this.hasChangeListener(listener)) {
-            return;
+        removeChangeListener(listener: IChangeListener) {
+            var index = this._changeListeners.indexOf(listener);
+            if (index > -1) {
+                this._changeListeners.splice(index, 1);
+            }
+
+            if (this._changeListeners.length < 1) {
+                this._bindingSources.forEach((prop) => {
+                    prop.removeChangeListener(this._bindingListener);
+                });
+            }
+
+            this.invalidate();
         }
 
-        this._changeListeners.push(listener);
-
-        let x = this.value;
-    }
-
-    removeChangeListener(listener: IChangeListener) {
-        var index = this._changeListeners.indexOf(listener);
-        if (index > -1) {
-            this._changeListeners.splice(index, 1);
+        hasChangeListener(listener: IChangeListener) {
+            return this._changeListeners.indexOf(listener) > -1;
         }
 
-        if (this._changeListeners.length < 1) {
+        getObjectValue() {
+            return this.value;
+        }
+
+        bind(...properties: IProperty<any>[]) {
+            properties.forEach((prop) => {
+                prop.addChangeListener(this._bindingListener);
+                this._bindingSources.push(prop);
+            });
+
+            this.invalidate();
+        }
+
+        unbindAll() {
             this._bindingSources.forEach((prop) => {
                 prop.removeChangeListener(this._bindingListener);
             });
+            this._bindingSources = [];
+            this.invalidate();
         }
 
-        this.invalidate();
-    }
-
-    hasChangeListener(listener: IChangeListener) {
-        return this._changeListeners.indexOf(listener) > -1;
-    }
-
-    getObjectValue() {
-        return this.value;
-    }
-
-    bind(...properties: IProperty<any>[]) {
-        properties.forEach((prop) => {
-            prop.addChangeListener(this._bindingListener);
-            this._bindingSources.push(prop);
-        });
-
-        this.invalidate();
-    }
-
-    unbindAll() {
-        this._bindingSources.forEach((prop) => {
-            prop.removeChangeListener(this._bindingListener);
-        });
-        this._bindingSources = [];
-        this.invalidate();
-    }
-
-    unbind(property: IProperty<any>) {
-        property.removeChangeListener(this._bindingListener);
-        var index = this._bindingSources.indexOf(property);
-        if (index > -1) {
-            this._bindingSources.splice(index, 1);
-        }
-        this.invalidate();
-    }
-
-    invalidate() {
-        this._valid = false;
-        this._notifyListenersOnce.run();
-    }
-
-    invalidateIfNeeded() {
-        if (!this._valid) {
-            return;
-        }
-        this.invalidate();
-    }
-
-    private fireChangeListeners() {
-        this._changeListeners.forEach((listener: IChangeListener) => {
-            listener(this);
-        });
-    }
-
-}
-
-export class KeyFrame<T> {
-
-    constructor(
-        private _time: number,
-        private _property: Property<T>,
-        private _endValue: T,
-        private _keyframeReachedListener: { (): void } = null,
-        private _interpolator: IInterpolator = Interpolators.Linear) {
-
-        if (_time < 0) {
-            throw "The time parameter can not be smaller than zero.";
+        unbind(property: IProperty<any>) {
+            property.removeChangeListener(this._bindingListener);
+            var index = this._bindingSources.indexOf(property);
+            if (index > -1) {
+                this._bindingSources.splice(index, 1);
+            }
+            this.invalidate();
         }
 
-        if (_property == null) {
-            throw "The property parameter can not be null.";
-        }
-        if (_property.readonly) {
-            throw "Can't animate a read-only property.";
+        invalidate() {
+            this._valid = false;
+            this._notifyListenersOnce.run();
         }
 
-        if (_endValue == null && !_property.nullable) {
-            throw "Can't set null value to a non nullable property.";
+        invalidateIfNeeded() {
+            if (!this._valid) {
+                return;
+            }
+            this.invalidate();
         }
 
-        if (_interpolator == null) {
-            this._interpolator = Interpolators.Linear;
-        }
-    }
-
-    get time() {
-        return this._time;
-    }
-
-    get property() {
-        return this._property
-    }
-
-    get endValue() {
-        return this._endValue;
-    }
-
-    get interpolator() {
-        return this._interpolator;
-    }
-
-    get keyFrameReachedListener() {
-        return this._keyframeReachedListener;
-    }
-
-}
-
-export class PropertyLine<T> {
-
-    private _property: Property<T>;
-    private _startTime: number = -1;
-    private _lastRunTime: number = -1;
-    private _previousFrame: KeyFrame<T> = null;
-
-    constructor(private _keyFrames: KeyFrame<T>[]) {
-        this._property = _keyFrames[0].property;
-        var firstFrame: KeyFrame<T> = _keyFrames[0];
-        if (firstFrame.time > 0) {
-            _keyFrames.splice(0, 0, new KeyFrame(0, firstFrame.property, firstFrame.property.value));
-        }
-    }
-
-    get startTime() {
-        return this._startTime;
-    }
-
-    set startTime(startTime: number) {
-        this._startTime = startTime;
-    }
-
-    animate() {
-        var actTime = Date.now();
-
-        if (actTime == this._startTime) {
-            return false;
+        private fireChangeListeners() {
+            this._changeListeners.forEach((listener: IChangeListener) => {
+                listener(this);
+            });
         }
 
-        var nextFrame: KeyFrame<T> = null;
-        var actFrame: KeyFrame<T> = null;
-        for (var i = 0; i < this._keyFrames.length; i++) {
-            let frame = this._keyFrames[i];
-            var fr: KeyFrame<T> = frame;
-            if (actTime >= this._startTime + fr.time) {
-                actFrame = frame;
-            } else {
-                nextFrame = frame;
-                break;
+    }
+
+    export class KeyFrame<T> {
+
+        constructor(
+            private _time: number,
+            private _property: Property<T>,
+            private _endValue: T,
+            private _keyframeReachedListener: { (): void } = null,
+            private _interpolator: IInterpolator = Interpolators.Linear) {
+
+            if (_time < 0) {
+                throw "The time parameter can not be smaller than zero.";
             }
 
-            if (this._startTime + fr.time > this._lastRunTime && this._startTime + fr.time <= actTime) {
-                if (fr.keyFrameReachedListener != null) {
-                    fr.keyFrameReachedListener();
+            if (_property == null) {
+                throw "The property parameter can not be null.";
+            }
+            if (_property.readonly) {
+                throw "Can't animate a read-only property.";
+            }
+
+            if (_endValue == null && !_property.nullable) {
+                throw "Can't set null value to a non nullable property.";
+            }
+
+            if (_interpolator == null) {
+                this._interpolator = Interpolators.Linear;
+            }
+        }
+
+        get time() {
+            return this._time;
+        }
+
+        get property() {
+            return this._property
+        }
+
+        get endValue() {
+            return this._endValue;
+        }
+
+        get interpolator() {
+            return this._interpolator;
+        }
+
+        get keyFrameReachedListener() {
+            return this._keyframeReachedListener;
+        }
+
+    }
+
+    export class PropertyLine<T> {
+
+        private _property: Property<T>;
+        private _startTime: number = -1;
+        private _lastRunTime: number = -1;
+        private _previousFrame: KeyFrame<T> = null;
+
+        constructor(private _keyFrames: KeyFrame<T>[]) {
+            this._property = _keyFrames[0].property;
+            var firstFrame: KeyFrame<T> = _keyFrames[0];
+            if (firstFrame.time > 0) {
+                _keyFrames.splice(0, 0, new KeyFrame(0, firstFrame.property, firstFrame.property.value));
+            }
+        }
+
+        get startTime() {
+            return this._startTime;
+        }
+
+        set startTime(startTime: number) {
+            this._startTime = startTime;
+        }
+
+        animate() {
+            var actTime = Date.now();
+
+            if (actTime == this._startTime) {
+                return false;
+            }
+
+            var nextFrame: KeyFrame<T> = null;
+            var actFrame: KeyFrame<T> = null;
+            for (var i = 0; i < this._keyFrames.length; i++) {
+                let frame = this._keyFrames[i];
+                var fr: KeyFrame<T> = frame;
+                if (actTime >= this._startTime + fr.time) {
+                    actFrame = frame;
+                } else {
+                    nextFrame = frame;
+                    break;
+                }
+
+                if (this._startTime + fr.time > this._lastRunTime && this._startTime + fr.time <= actTime) {
+                    if (fr.keyFrameReachedListener != null) {
+                        fr.keyFrameReachedListener();
+                    }
                 }
             }
-        }
 
-        if (actFrame != null) {
-            if (nextFrame != null) {
-                var pos = ((actTime - this._startTime - actFrame.time)) / (nextFrame.time - actFrame.time);
-                actFrame.property.value = actFrame.property.animate(pos, actFrame.endValue, nextFrame.endValue);
-            } else {
-                actFrame.property.value = actFrame.endValue;
-            }
-        }
-
-        this._lastRunTime = actTime;
-
-        return actTime >= this._startTime + this._keyFrames[this._keyFrames.length - 1].time;
-
-    }
-
-}
-
-export interface IInterpolator {
-    (value: number): number;
-}
-
-export class Interpolators {
-    static get Linear(): IInterpolator {
-        return (value: number): number => {
-            return value;
-        }
-    }
-}
-
-export abstract class AAnimator {
-
-    private static animators: AAnimator[] = [];
-    private static ANIMATOR_TASK = (): void => {
-        AAnimator.animate();
-    };
-
-    private started: boolean = false;
-
-    static animate() {
-        for (var i = AAnimator.animators.length - 1; i >= 0; i--) {
-            if (AAnimator.animators.length <= i) {
-                continue;
-            }
-            var animator: AAnimator = AAnimator.animators[i];
-            try {
-                animator.onAnimate();
-            } catch (t) {
-                new Console().error(t);
-            }
-        }
-
-        if (AAnimator.animators.length > 0) {
-            EventQueue.Instance.invokeLater(AAnimator.ANIMATOR_TASK);
-        }
-    }
-
-    start() {
-        if (this.started) {
-            return;
-        }
-
-        AAnimator.animators.push(this);
-        if (AAnimator.animators.length == 1) {
-            EventQueue.Instance.invokeLater(AAnimator.ANIMATOR_TASK);
-        }
-        this.started = true;
-    }
-
-    stop() {
-        if (!this.started) {
-            return;
-        }
-
-        this.started = false;
-
-        var idx = AAnimator.animators.indexOf(this);
-        AAnimator.animators.splice(idx, 1)
-    }
-
-    get Started() {
-        return this.started;
-    }
-
-    get Stopped() {
-        return !this.started;
-    }
-
-    protected abstract onAnimate(): void;
-}
-
-export class Timeline extends AAnimator {
-
-
-    private propertyLines: PropertyLine<any>[] = [];
-    private repeatCount = 0;
-    private finishedEvent: Event<TimelineFinishedEventArgs> = new Event<TimelineFinishedEventArgs>();
-
-    constructor(private keyFrames: KeyFrame<any>[]) {
-        super();
-    }
-
-    createPropertyLines() {
-        var plMap: { [key: string]: KeyFrame<any>[] } = {};
-        var keys: string[] = [];
-        for (var i = 0; i < this.keyFrames.length; i++) {
-            let keyFrame = this.keyFrames[i];
-            let kf: KeyFrame<any> = keyFrame;
-            let propertyLine = plMap[kf.property.id];
-            if (propertyLine == null) {
-                propertyLine = [];
-                plMap[kf.property.id] = propertyLine;
-                keys.push(kf.property.id)
-            }
-            if (propertyLine.length > 0) {
-                if (propertyLine[propertyLine.length - 1].time >= kf.time) {
-                    throw "The keyframes must be in ascending time order per property.";
+            if (actFrame != null) {
+                if (nextFrame != null) {
+                    var pos = ((actTime - this._startTime - actFrame.time)) / (nextFrame.time - actFrame.time);
+                    actFrame.property.value = actFrame.property.animate(pos, actFrame.endValue, nextFrame.endValue);
+                } else {
+                    actFrame.property.value = actFrame.endValue;
                 }
             }
-            propertyLine.push(keyFrame);
+
+            this._lastRunTime = actTime;
+
+            return actTime >= this._startTime + this._keyFrames[this._keyFrames.length - 1].time;
+
         }
-        keys.forEach((key) => {
-            let propertyLine: PropertyLine<any> = plMap[key][0].property.createPropertyLine(plMap[key]);
-            this.propertyLines.push(propertyLine);
-        });
+
     }
 
-    start(repeatCount: number = 0) {
-        if (repeatCount == null) {
-            repeatCount = 0;
-        }
-        repeatCount = repeatCount | 0;
-        this.createPropertyLines();
-        this.repeatCount = repeatCount;
-        var startTime = Date.now();
-        this.propertyLines.forEach((propertyLine) => {
-            let pl: PropertyLine<any> = propertyLine;
-            pl.startTime = startTime;
-        });
-        super.start();
+    export interface IInterpolator {
+        (value: number): number;
     }
 
-    stop() {
-        if (!this.Started) {
-            return;
+    export class Interpolators {
+        static get Linear(): IInterpolator {
+            return (value: number): number => {
+                return value;
+            }
         }
-        super.stop();
-        this.finishedEvent.fireEvent(new TimelineFinishedEventArgs(true));
     }
 
-    onAnimate() {
-        var finished = true;
-        this.propertyLines.forEach((propertyLine) => {
-            let pl: PropertyLine<any> = propertyLine;
-            finished = finished && pl.animate();
-        });
+    export abstract class AAnimator {
 
-        if (finished) {
-            if (this.repeatCount < 0) {
-                let startTime = Date.now();
-                this.propertyLines.forEach((propertyLine) => {
-                    let pl: PropertyLine<any> = propertyLine;
-                    pl.startTime = startTime;
-                });
-            } else {
-                this.repeatCount--;
-                if (this.repeatCount > -1) {
+        private static animators: AAnimator[] = [];
+        private static ANIMATOR_TASK = (): void => {
+            AAnimator.animate();
+        };
+
+        private started: boolean = false;
+
+        static animate() {
+            for (var i = AAnimator.animators.length - 1; i >= 0; i--) {
+                if (AAnimator.animators.length <= i) {
+                    continue;
+                }
+                var animator: AAnimator = AAnimator.animators[i];
+                try {
+                    animator.onAnimate();
+                } catch (t) {
+                    new Console().error(t);
+                }
+            }
+
+            if (AAnimator.animators.length > 0) {
+                EventQueue.Instance.invokeLater(AAnimator.ANIMATOR_TASK);
+            }
+        }
+
+        start() {
+            if (this.started) {
+                return;
+            }
+
+            AAnimator.animators.push(this);
+            if (AAnimator.animators.length == 1) {
+                EventQueue.Instance.invokeLater(AAnimator.ANIMATOR_TASK);
+            }
+            this.started = true;
+        }
+
+        stop() {
+            if (!this.started) {
+                return;
+            }
+
+            this.started = false;
+
+            var idx = AAnimator.animators.indexOf(this);
+            AAnimator.animators.splice(idx, 1)
+        }
+
+        get Started() {
+            return this.started;
+        }
+
+        get Stopped() {
+            return !this.started;
+        }
+
+        protected abstract onAnimate(): void;
+    }
+
+    export class Timeline extends AAnimator {
+
+
+        private propertyLines: PropertyLine<any>[] = [];
+        private repeatCount = 0;
+        private finishedEvent: Event<TimelineFinishedEventArgs> = new Event<TimelineFinishedEventArgs>();
+
+        constructor(private keyFrames: KeyFrame<any>[]) {
+            super();
+        }
+
+        createPropertyLines() {
+            var plMap: { [key: string]: KeyFrame<any>[] } = {};
+            var keys: string[] = [];
+            for (var i = 0; i < this.keyFrames.length; i++) {
+                let keyFrame = this.keyFrames[i];
+                let kf: KeyFrame<any> = keyFrame;
+                let propertyLine = plMap[kf.property.id];
+                if (propertyLine == null) {
+                    propertyLine = [];
+                    plMap[kf.property.id] = propertyLine;
+                    keys.push(kf.property.id)
+                }
+                if (propertyLine.length > 0) {
+                    if (propertyLine[propertyLine.length - 1].time >= kf.time) {
+                        throw "The keyframes must be in ascending time order per property.";
+                    }
+                }
+                propertyLine.push(keyFrame);
+            }
+            keys.forEach((key) => {
+                let propertyLine: PropertyLine<any> = plMap[key][0].property.createPropertyLine(plMap[key]);
+                this.propertyLines.push(propertyLine);
+            });
+        }
+
+        start(repeatCount: number = 0) {
+            if (repeatCount == null) {
+                repeatCount = 0;
+            }
+            repeatCount = repeatCount | 0;
+            this.createPropertyLines();
+            this.repeatCount = repeatCount;
+            var startTime = Date.now();
+            this.propertyLines.forEach((propertyLine) => {
+                let pl: PropertyLine<any> = propertyLine;
+                pl.startTime = startTime;
+            });
+            super.start();
+        }
+
+        stop() {
+            if (!this.Started) {
+                return;
+            }
+            super.stop();
+            this.finishedEvent.fireEvent(new TimelineFinishedEventArgs(true));
+        }
+
+        onAnimate() {
+            var finished = true;
+            this.propertyLines.forEach((propertyLine) => {
+                let pl: PropertyLine<any> = propertyLine;
+                finished = finished && pl.animate();
+            });
+
+            if (finished) {
+                if (this.repeatCount < 0) {
                     let startTime = Date.now();
                     this.propertyLines.forEach((propertyLine) => {
                         let pl: PropertyLine<any> = propertyLine;
                         pl.startTime = startTime;
                     });
                 } else {
-                    super.stop();
-                    this.finishedEvent.fireEvent(new TimelineFinishedEventArgs(false));
+                    this.repeatCount--;
+                    if (this.repeatCount > -1) {
+                        let startTime = Date.now();
+                        this.propertyLines.forEach((propertyLine) => {
+                            let pl: PropertyLine<any> = propertyLine;
+                            pl.startTime = startTime;
+                        });
+                    } else {
+                        super.stop();
+                        this.finishedEvent.fireEvent(new TimelineFinishedEventArgs(false));
+                    }
                 }
             }
         }
-    }
 
-    onFinishedEvent() {
-        return this.finishedEvent;
-    }
-
-}
-
-export class TimelineFinishedEventArgs {
-    constructor(private stopped: boolean = false) {
+        onFinishedEvent() {
+            return this.finishedEvent;
+        }
 
     }
 
-    get Stopped() {
-        return this.stopped;
+    export class TimelineFinishedEventArgs {
+        constructor(private stopped: boolean = false) {
+
+        }
+
+        get Stopped() {
+            return this.stopped;
+        }
     }
-}
 
-export class NumberProperty extends Property<number> {
+    export class NumberProperty extends Property<number> {
 
-    animate(pos: number, startValue: number, endValue: number): number {
-        return startValue + ((endValue - startValue) * pos);
+        animate(pos: number, startValue: number, endValue: number): number {
+            return startValue + ((endValue - startValue) * pos);
+        }
+
     }
 
-}
+    export class StringProperty extends Property<string> {
 
-export class StringProperty extends Property<string> {
+    }
 
-}
+    export class PaddingProperty extends Property<Padding> {
 
-export class PaddingProperty extends Property<Padding> {
+    }
 
-}
+    export class BorderProperty extends Property<Border> {
 
-export class BorderProperty extends Property<Border> {
+    }
 
-}
+    export class BackgroundProperty extends Property<ABackground> {
 
-export class BackgroundProperty extends Property<ABackground> {
+    }
 
-}
+    export class BooleanProperty extends Property<boolean> {
 
-export class BooleanProperty extends Property<boolean> {
+    }
+    
+    export class ColorProperty extends Property<Color> {
 
-}
+    }
 
 }
 
