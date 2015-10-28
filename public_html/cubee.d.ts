@@ -894,3 +894,10 @@ declare module cubee {
         boundsTop: number;
     }
 }
+declare module cubee {
+    class AView<T> extends AUserControl {
+        private _model;
+        constructor(_model: T);
+        model: T;
+    }
+}
