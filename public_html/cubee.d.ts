@@ -3,13 +3,26 @@ declare module cubee {
         sender: Object;
         constructor(sender: Object);
     }
+    interface IListenerCallback<T> {
+        onAdded(listener: IEventListener<T>): void;
+        onRemoved(listener: IEventListener<T>): void;
+    }
+    class HtmlEventListenerCallback<T> implements IListenerCallback<T> {
+        private _element;
+        private _eventType;
+        constructor(_element: HTMLElement, _eventType: string);
+        onAdded(listener: IEventListener<T>): void;
+        onRemoved(listener: IEventListener<T>): void;
+    }
     class Event<T> {
-        private listeners;
-        Event(): void;
+        private _listenerCallback;
+        private _listeners;
+        constructor(_listenerCallback?: IListenerCallback<T>);
         addListener(listener: IEventListener<T>): void;
         removeListener(listener: IEventListener<T>): void;
         hasListener(listener: IEventListener<T>): boolean;
         fireEvent(args: T): void;
+        listenerCallback: IListenerCallback<T>;
     }
     class Timer {
         private func;
@@ -45,99 +58,10 @@ declare module cubee {
         constructor(func: IRunnable);
         run(): void;
     }
-    class MouseDragEventArgs {
-        screenX: number;
-        screenY: number;
-        deltaX: number;
-        deltaY: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        sender: Object;
-        constructor(screenX: number, screenY: number, deltaX: number, deltaY: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, sender: Object);
-    }
-    class MouseUpEventArgs {
-        screenX: number;
-        screenY: number;
-        deltaX: number;
-        deltaY: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        button: number;
-        nativeEvent: MouseEvent;
-        sender: Object;
-        constructor(screenX: number, screenY: number, deltaX: number, deltaY: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, button: number, nativeEvent: MouseEvent, sender: Object);
-    }
-    class MouseDownEventArgs {
-        screenX: number;
-        screenY: number;
-        deltaX: number;
-        deltaY: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        button: number;
-        nativeEvent: MouseEvent;
-        sender: Object;
-        constructor(screenX: number, screenY: number, deltaX: number, deltaY: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, button: number, nativeEvent: MouseEvent, sender: Object);
-    }
-    class MouseMoveEventArgs {
-        screenX: number;
-        screenY: number;
-        x: number;
-        y: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        sender: Object;
-        constructor(screenX: number, screenY: number, x: number, y: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, sender: Object);
-    }
-    class MouseWheelEventArgs {
-        wheelVelocity: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        sender: Object;
-        constructor(wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, sender: Object);
-    }
-    class ClickEventArgs {
-        screenX: number;
-        screenY: number;
-        deltaX: number;
-        deltaY: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        button: number;
-        sender: Object;
-        constructor(screenX: number, screenY: number, deltaX: number, deltaY: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, button: number, sender: Object);
-    }
-    class KeyEventArgs {
-        keyCode: number;
-        altPressed: boolean;
-        ctrlPressed: boolean;
-        shiftPressed: boolean;
-        metaPressed: boolean;
-        sender: Object;
-        nativeEvent: KeyboardEvent;
-        constructor(keyCode: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, sender: Object, nativeEvent: KeyboardEvent);
-    }
     class ParentChangedEventArgs extends EventArgs {
         newParent: ALayout;
         sender: Object;
         constructor(newParent: ALayout, sender: Object);
-    }
-    class ContextMenuEventArgs {
-        nativeEvent: UIEvent;
-        sender: Object;
-        constructor(nativeEvent: UIEvent, sender: Object);
     }
 }
 declare module cubee {
@@ -313,8 +237,12 @@ declare module cubee {
     class Color {
         private static _TRANSPARENT;
         static TRANSPARENT: Color;
+        private static _WHITE;
+        static WHITE: Color;
         private static _BLACK;
         static BLACK: Color;
+        private static _LIGHT_GRAY;
+        static LIGHT_GRAY: Color;
         static getArgbColor(argb: number): Color;
         static getArgbColorByComponents(alpha: number, red: number, green: number, blue: number): Color;
         static getRgbColor(rgb: number): Color;
@@ -461,6 +389,34 @@ declare module cubee {
         constructor(_css: string);
         css: string;
     }
+    enum EScrollBarPolicy {
+        VISIBLE = 0,
+        AUTO = 1,
+        HIDDEN = 2,
+    }
+    enum EPictureSizeMode {
+        NORMAL = 0,
+        CENTER = 1,
+        STRETCH = 2,
+        FILL = 3,
+        ZOOM = 4,
+        FIT_WIDTH = 5,
+        FIT_HEIGHT = 6,
+    }
+    class Image implements IStyle {
+        private _url;
+        private _onLoad;
+        private _width;
+        private _height;
+        private _loaded;
+        constructor(_url: string);
+        url: string;
+        onLoad: Event<EventArgs>;
+        width: number;
+        height: number;
+        loaded: boolean;
+        apply(element: HTMLElement): void;
+    }
 }
 declare module cubee {
     interface IRunnable {
@@ -581,10 +537,12 @@ declare module cubee {
         translateX: number;
         TranslateY: NumberProperty;
         translateY: number;
-        Padding: PaddingProperty;
-        padding: Padding;
-        Border: BorderProperty;
-        border: Border;
+        protected paddingProperty(): PaddingProperty;
+        protected Padding: PaddingProperty;
+        protected padding: Padding;
+        protected borderProperty(): BorderProperty;
+        protected Border: BorderProperty;
+        protected border: Border;
         MeasuredWidth: NumberProperty;
         measuredWidth: number;
         MeasuredHeight: NumberProperty;
@@ -601,12 +559,16 @@ declare module cubee {
         boundsLeft: number;
         BoundsTop: NumberProperty;
         boundsTop: number;
+        protected minWidthProperty(): NumberProperty;
         protected MinWidth: NumberProperty;
         protected minWidth: number;
+        protected minHeightProperty(): NumberProperty;
         protected MinHeight: NumberProperty;
         protected minHeight: number;
+        protected maxWidthProperty(): NumberProperty;
         protected MaxWidth: NumberProperty;
         protected maxWidth: number;
+        protected maxHeightProperty(): NumberProperty;
         protected MaxHeight: NumberProperty;
         protected maxHeight: number;
         protected setPosition(left: number, top: number): void;
@@ -619,17 +581,17 @@ declare module cubee {
         pointerTransparent: boolean;
         Visible: Property<boolean>;
         visible: boolean;
-        onClick: Event<ClickEventArgs>;
-        onContextMenu: Event<ContextMenuEventArgs>;
-        onMouseDown: Event<MouseDownEventArgs>;
-        onMouseMove: Event<MouseMoveEventArgs>;
-        onMouseUp: Event<MouseUpEventArgs>;
-        onMouseEnter: Event<Object>;
-        onMouseLeave: Event<Object>;
-        onMouseWheel: Event<MouseWheelEventArgs>;
-        onKeyDown: Event<KeyEventArgs>;
-        onKeyPress: Event<KeyEventArgs>;
-        onKeyUp: Event<KeyEventArgs>;
+        onClick: Event<MouseEvent>;
+        onContextMenu: Event<Object>;
+        onMouseDown: Event<MouseEvent>;
+        onMouseMove: Event<MouseEvent>;
+        onMouseUp: Event<MouseEvent>;
+        onMouseEnter: Event<MouseEvent>;
+        onMouseLeave: Event<MouseEvent>;
+        onMouseWheel: Event<MouseEvent>;
+        onKeyDown: Event<KeyboardEvent>;
+        onKeyPress: Event<KeyboardEvent>;
+        onKeyUp: Event<KeyboardEvent>;
         onParentChanged: Event<ParentChangedEventArgs>;
         Alpha: NumberProperty;
         alpha: number;
@@ -641,11 +603,6 @@ declare module cubee {
         selectable: boolean;
         left: number;
         top: number;
-        _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: UIEvent): boolean;
-        protected onPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number): boolean;
-        protected onPointerEventFallingDown(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: UIEvent): boolean;
-        _isIntersectsPoint(x: number, y: number): boolean;
-        private isPointIntersectsLine(px, py, lx1, ly1, lx2, ly2);
         Rotate: NumberProperty;
         rotate: number;
         ScaleX: NumberProperty;
@@ -671,8 +628,6 @@ declare module cubee {
         abstract _onChildRemoved(child: AComponent, index: number): void;
         abstract _onChildrenCleared(): void;
         layout(): void;
-        _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, type: number, button: number, event: MouseEvent): boolean;
-        private _rotatePoint(cx, cy, x, y, angle);
         protected abstract onLayout(): void;
         getComponentsAtPosition(x: number, y: number): AComponent[];
         private getComponentsAtPosition_impl(root, x, y, result);
@@ -688,16 +643,16 @@ declare module cubee {
         private _shadow;
         private _draggable;
         constructor();
-        protected _Width: NumberProperty;
+        protected widthProperty(): NumberProperty;
         protected Width: NumberProperty;
         protected width: number;
-        protected _Height: NumberProperty;
+        protected heightProperty(): NumberProperty;
         protected Height: NumberProperty;
         protected height: number;
-        protected _Background: BackgroundProperty;
+        protected backgroundProperty(): BackgroundProperty;
         protected Background: BackgroundProperty;
         protected background: ABackground;
-        protected _Shadow: Property<BoxShadow>;
+        protected shadowProperty(): Property<BoxShadow>;
         protected Shadow: Property<BoxShadow>;
         protected shadow: BoxShadow;
         Draggable: BooleanProperty;
@@ -709,13 +664,24 @@ declare module cubee {
     }
 }
 declare module cubee {
+    class AView<T> extends AUserControl {
+        private _model;
+        constructor(_model: T);
+        model: T;
+    }
+}
+declare module cubee {
     class Panel extends AUserControl {
+        protected widthProperty(): NumberProperty;
         Width: NumberProperty;
         width: number;
+        protected heightProperty(): NumberProperty;
         Height: NumberProperty;
         height: number;
+        protected backgroundProperty(): BackgroundProperty;
         Background: BackgroundProperty;
         background: ABackground;
+        protected shadowProperty(): Property<BoxShadow>;
         Shadow: Property<BoxShadow>;
         shadow: BoxShadow;
         children: LayoutChildren;
@@ -780,6 +746,48 @@ declare module cubee {
     }
 }
 declare module cubee {
+    class ScrollBox extends AUserControl {
+        private _content;
+        private _hScrollPolicy;
+        private _vScrollPolicy;
+        private _scrollWidth;
+        private _scrollHeight;
+        private _hScrollPos;
+        private _vScrollPos;
+        private _maxHScrollPos;
+        private _maxVScrollPos;
+        private _maxHScrollPosWriter;
+        private _maxVScrollPosWriter;
+        private _calculateScrollWidthExp;
+        private _calculateScrollHeightExp;
+        constructor();
+        protected widthProperty(): NumberProperty;
+        Width: NumberProperty;
+        width: number;
+        protected heightProperty(): NumberProperty;
+        Height: NumberProperty;
+        height: number;
+        Content: Property<AComponent>;
+        content: AComponent;
+        HScrollPolicy: Property<EScrollBarPolicy>;
+        hScrollPolicy: EScrollBarPolicy;
+        VScrollPolicy: Property<EScrollBarPolicy>;
+        vScrollPolicy: EScrollBarPolicy;
+        ScrollWidth: NumberProperty;
+        scrollWidth: number;
+        ScrollHeight: NumberProperty;
+        scrollHeight: number;
+        HScrollPos: NumberProperty;
+        hScrollPos: number;
+        VScrollPos: NumberProperty;
+        vScrollPos: number;
+        MaxHScrollPos: NumberProperty;
+        maxHScrollPos: number;
+        MaxVScrollPos: NumberProperty;
+        maxVScrollPos: number;
+    }
+}
+declare module cubee {
     class Label extends AComponent {
         private _width;
         private _height;
@@ -821,6 +829,279 @@ declare module cubee {
     }
 }
 declare module cubee {
+    class Button extends AComponent {
+        private _width;
+        private _height;
+        private _text;
+        private _textOverflow;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        private _background;
+        private _shadow;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        TextOverflow: Property<ETextOverflow>;
+        textOverflow: ETextOverflow;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
+        Background: BackgroundProperty;
+        background: ABackground;
+        Shadow: Property<BoxShadow>;
+        shadow: BoxShadow;
+    }
+}
+declare module cubee {
+    class TextBox extends AComponent {
+        private _width;
+        private _height;
+        private _text;
+        private _background;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        private _placeholder;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        Background: BackgroundProperty;
+        background: ABackground;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
+        Placeholder: StringProperty;
+        placeholder: string;
+    }
+}
+declare module cubee {
+    class PasswordBox extends AComponent {
+        private _width;
+        private _height;
+        private _text;
+        private _background;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        private _placeholder;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        Background: BackgroundProperty;
+        background: ABackground;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
+        Placeholder: StringProperty;
+        placeholder: string;
+    }
+}
+declare module cubee {
+    class TextArea extends AComponent {
+        private _width;
+        private _height;
+        private _text;
+        private _background;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        private _placeholder;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        Background: BackgroundProperty;
+        background: ABackground;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
+        Placeholder: StringProperty;
+        placeholder: string;
+    }
+}
+declare module cubee {
+    class CheckBox extends AComponent {
+        private _checked;
+        constructor();
+        Checked: BooleanProperty;
+        checked: boolean;
+    }
+}
+declare module cubee {
+    class ComboBox<T> extends AComponent {
+        private _selectedIndex;
+        private _selectedItem;
+        private items;
+        private _width;
+        private _height;
+        private _text;
+        private _background;
+        private _foreColor;
+        private _textAlign;
+        private _verticalAlign;
+        private _bold;
+        private _italic;
+        private _underline;
+        private _fontSize;
+        private _fontFamily;
+        private _placeholder;
+        constructor();
+        Width: NumberProperty;
+        width: number;
+        Height: NumberProperty;
+        height: number;
+        Text: StringProperty;
+        text: string;
+        Background: BackgroundProperty;
+        background: ABackground;
+        ForeColor: ColorProperty;
+        foreColor: Color;
+        TextAlign: Property<ETextAlign>;
+        textAlign: ETextAlign;
+        VerticalAlign: Property<EVAlign>;
+        verticalAlign: EVAlign;
+        Bold: BooleanProperty;
+        bold: boolean;
+        Italic: BooleanProperty;
+        italic: boolean;
+        Underline: BooleanProperty;
+        underline: boolean;
+        FontSize: NumberProperty;
+        fontSize: number;
+        FontFamily: Property<FontFamily>;
+        fontFamily: FontFamily;
+        Placeholder: StringProperty;
+        placeholder: string;
+        protected selectedIndexProperty(): NumberProperty;
+        SelectedIndex: NumberProperty;
+        selectedIndex: number;
+        protected selectedItemProperty(): Property<T>;
+        SelectedItem: Property<T>;
+        selectedItem: T;
+    }
+}
+declare module cubee {
+    class PictureBox extends AComponent {
+        private _width;
+        private _height;
+        private _pictureSizeMode;
+        private _image;
+        private _background;
+        private _imgElement;
+        constructor();
+        private recalculateSize();
+        protected pictureSizeModeProperty(): Property<EPictureSizeMode>;
+        PictureSizeMode: Property<EPictureSizeMode>;
+        pictureSizeMode: EPictureSizeMode;
+        protected widthProperty(): NumberProperty;
+        Width: NumberProperty;
+        width: number;
+        protected heightProperty(): NumberProperty;
+        Height: NumberProperty;
+        height: number;
+        protected paddingProperty(): PaddingProperty;
+        Padding: PaddingProperty;
+        padding: Padding;
+        protected borderProperty(): BorderProperty;
+        Border: BorderProperty;
+        border: Border;
+        protected backgroundProperty(): BackgroundProperty;
+        Background: BackgroundProperty;
+        background: ABackground;
+        protected imageProperty(): Property<Image>;
+        Image: Property<Image>;
+        image: Image;
+    }
+}
+declare module cubee {
     class APopup {
         private _modal;
         private _autoClose;
@@ -848,7 +1129,6 @@ declare module cubee {
         translateY: number;
         Center: BooleanProperty;
         center: boolean;
-        _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent): boolean;
         _layout(): void;
     }
     class Popups {
@@ -858,7 +1138,6 @@ declare module cubee {
         static _removePopup(popup: APopup): void;
         static _requestLayout(): void;
         private static layout();
-        static doPointerEventClimbingUp(x: number, y: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent): boolean;
         constructor();
     }
 }
@@ -879,7 +1158,6 @@ declare module cubee {
         requestLayout(): void;
         layout(): void;
         rootComponent: AComponent;
-        _doPointerEventClimbingUp(screenX: number, screenY: number, wheelVelocity: number, altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent): boolean;
         ClientWidth: NumberProperty;
         clientWidth: number;
         ClientHeight: NumberProperty;
@@ -895,9 +1173,464 @@ declare module cubee {
     }
 }
 declare module cubee {
-    class AView<T> extends AUserControl {
-        private _model;
-        constructor(_model: T);
-        model: T;
+    class EIcon {
+        private _value;
+        private static _ADJUST;
+        static ADJUST: EIcon;
+        private static _ANCHOR;
+        static ANCHOR: EIcon;
+        private static _ARCHIVE;
+        static ARCHIVE: EIcon;
+        private static _ARROWS;
+        static ARROWS: EIcon;
+        private static _ARROWS_H;
+        static ARROWS_H: EIcon;
+        private static _ARROWS_V;
+        static ARROWS_V: EIcon;
+        private static _ASTERISK;
+        static ASTERISK: EIcon;
+        private static _BAN;
+        static BAN: EIcon;
+        private static _BAR_CHART_O;
+        static BAR_CHART_O: EIcon;
+        private static _BARCODE;
+        static BARCODE: EIcon;
+        private static _BARS;
+        static BARS: EIcon;
+        private static _BEER;
+        static BEER: EIcon;
+        private static _BELL;
+        static BELL: EIcon;
+        private static _BELL_O;
+        static BELL_O: EIcon;
+        private static _BOLT;
+        static BOLT: EIcon;
+        private static _BOOK;
+        static BOOK: EIcon;
+        private static _BOOKMARK;
+        static BOOKMARK: EIcon;
+        private static _BOOKMARK_O;
+        static BOOKMARK_O: EIcon;
+        private static _BRIEFCASE;
+        static BRIEFCASE: EIcon;
+        private static _BUG;
+        static BUG: EIcon;
+        private static _BUILDING_O;
+        private static _BULLHORN;
+        private static _BULLSEYE;
+        private static _CALENDAR;
+        private static _CALENDAR_O;
+        private static _CAMERA;
+        private static _CAMERA_RETRO;
+        private static _CARET_SQUARE_O_DOWN;
+        private static _CARET_SQUARE_O_RIGHT;
+        private static _CARET_SQUARE_O_UP;
+        private static _CERTIFICATE;
+        private static _CHECK;
+        private static _CHECK_CIRCLE;
+        private static _CHECK_CIRCLE_O;
+        private static _CHECK_SQUARE;
+        private static _CHECK_SQUARE_O;
+        private static _CIRCLE;
+        private static _CIRCLE_O;
+        private static _CLOCK_O;
+        private static _CLOUD;
+        private static _CLOUD_DOWNLOAD;
+        private static _CLOUD_UPLOAD;
+        private static _CODE;
+        private static _CODE_FORK;
+        private static _COFFEE;
+        private static _COG;
+        private static _COGS;
+        private static _COMMENT;
+        private static _COMMENT_O;
+        private static _COMMENTS;
+        private static _COMMENTS_O;
+        private static _COMPASS;
+        private static _CREDIT_CARD;
+        private static _CROP;
+        private static _CROSSHAIRS;
+        private static _CUTLERY;
+        private static _DASHBOARD;
+        private static _DESKTOP;
+        private static _DOWNLOAD;
+        private static _EDIT;
+        private static _ELLIPSIS_H;
+        private static _ELLIPSIS_V;
+        private static _ENVELOPE;
+        private static _ENVELOPE_O;
+        private static _ERASER;
+        private static _EXCHANGE;
+        private static _EXCLAMATION;
+        private static _EXCLAMATION_CIRCLE;
+        private static _EXCLAMATION_TRIANGLE;
+        private static _EXTERNAL_LINK;
+        private static _EXTERNAL_LINK_SQUARE;
+        private static _EYE;
+        private static _EYE_SLASH;
+        private static _FEMALE;
+        private static _FIGHTER_JET;
+        private static _FILM;
+        private static _FILTER;
+        private static _FIRE;
+        private static _FIRE_EXTINGUISHER;
+        private static _FLAG;
+        private static _FLAG_CHECKERED;
+        private static _FLAG_O;
+        private static _FLASH;
+        private static _FLASK;
+        private static _FOLDER;
+        private static _FOLDER_O;
+        private static _FOLDER_OPEN;
+        private static _FOLDER_OPEN_O;
+        private static _FROWN_O;
+        private static _GAMEPAD;
+        private static _GAVEL;
+        private static _GEAR;
+        private static _GEARS;
+        private static _GIFT;
+        private static _GLASS;
+        private static _GLOBE;
+        private static _GROUP;
+        private static _HDD_O;
+        private static _HEADPHONES;
+        private static _HEART;
+        private static _HEART_O;
+        private static _HOME;
+        private static _INBOX;
+        private static _INFO;
+        private static _INFO_CIRCLE;
+        private static _KEY;
+        private static _KEYBOARD_O;
+        private static _LAPTOP;
+        private static _LEAF;
+        private static _LEGAL;
+        private static _LEMON_O;
+        private static _LEVEL_DOWN;
+        private static _LEVEL_UP;
+        private static _LIGHTBULB_O;
+        private static _LOCATION_ARROW;
+        private static _LOCK;
+        private static _MAGIC;
+        private static _MAGNET;
+        private static _MAIL_FORWARD;
+        private static _MAIL_REPLY;
+        private static _MAIL_REPLY_ALL;
+        private static _MALE;
+        private static _MAP_MARKER;
+        private static _MEH_O;
+        private static _MICROPHONE;
+        private static _MICROPHONE_SLASH;
+        private static _MINUS;
+        private static _MINUS_CIRCLE;
+        private static _MINUS_SQUARE;
+        private static _MINUS_SQUARE_O;
+        private static _MOBILE;
+        private static _MOBILE_PHONE;
+        private static _MONEY;
+        private static _MOON_O;
+        private static _MUSIC;
+        private static _PENCIL;
+        private static _PENCIL_SQUARE;
+        private static _PENCIL_SQUARE_O;
+        private static _PHONE;
+        private static _PHONE_SQUARE;
+        private static _PICTURE_O;
+        private static _PLANE;
+        private static _PLUS;
+        private static _PLUS_CIRCLE;
+        private static _PLUS_SQUARE;
+        private static _PLUS_SQUARE_O;
+        private static _POWER_OFF;
+        private static _PRINT;
+        private static _PUZZLE_PIECE;
+        private static _QRCODE;
+        private static _QUESTION;
+        private static _QUESTION_CIRCLE;
+        private static _QUOTE_LEFT;
+        private static _QUOTE_RIGHT;
+        private static _RANDOM;
+        private static _REFRESH;
+        private static _REPLY;
+        private static _REPLY_ALL;
+        private static _RETWEET;
+        private static _ROAD;
+        private static _ROCKET;
+        private static _RSS;
+        private static _RSS_SQUARE;
+        private static _SEARCH;
+        private static _SEARCH_MINUS;
+        private static _SEARCH_PLUS;
+        private static _SHARE;
+        private static _SHARE_SQUARE;
+        private static _SHARE_SQUARE_O;
+        private static _SHIELD;
+        private static _SHOPPING_CART;
+        private static _SIGN_IN;
+        private static _SIGN_OUT;
+        private static _SIGNAL;
+        private static _SITEMAP;
+        private static _SMILE_O;
+        private static _SORT;
+        private static _SORT_ALPHA_ASC;
+        private static _SORT_ALPHA_DESC;
+        private static _SORT_AMOUNT_ASC;
+        private static _SORT_AMOUNT_DESC;
+        private static _SORT_ASC;
+        private static _SORT_DESC;
+        private static _SORT_DOWN;
+        private static _SORT_NUMERIC_ASC;
+        private static _SORT_NUMERIC_DESC;
+        private static _SORT_UP;
+        private static _SPINNER;
+        private static _SQUARE;
+        private static _SQUARE_O;
+        private static _STAR;
+        private static _STAR_HALF;
+        private static _STAR_HALF_EMPTY;
+        private static _STAR_HALF_FULL;
+        private static _STAR_HALF_O;
+        private static _STAR_O;
+        private static _SUBSCRIPT;
+        private static _SUITCASE;
+        private static _SUN_O;
+        private static _SUPERSCRIPT;
+        private static _TABLET;
+        private static _TACHOMETER;
+        private static _TAG;
+        private static _TAGS;
+        private static _TASKS;
+        private static _TERMINAL;
+        private static _THUMB_TACK;
+        private static _THUMBS_DOWN;
+        private static _THUMBS_O_DOWN;
+        private static _THUMBS_O_UP;
+        private static _THUMBS_UP;
+        private static _TICKET;
+        private static _TIMES;
+        private static _TIMES_CIRCLE;
+        private static _TIMES_CIRCLE_O;
+        private static _TINT;
+        private static _TOGGLE_DOWN;
+        private static _TOGGLE_LEFT;
+        private static _TOGGLE_RIGHT;
+        private static _TOGGLE_UP;
+        private static _TRASH_O;
+        private static _TROPHY;
+        private static _TRUCK;
+        private static _UMBRELLA;
+        private static _UNLOCK;
+        private static _UNLOCK_ALT;
+        private static _UNSORTED;
+        private static _UPLOAD;
+        private static _USER;
+        private static _USERS;
+        private static _VIDEO_CAMERA;
+        private static _VOLUME_DOWN;
+        private static _VOLUME_OFF;
+        private static _VOLUME_UP;
+        private static _WARNING;
+        private static _WHEELCHAIR;
+        private static _WRENCH;
+        private static _DOT_CIRCLE_O;
+        private static _BITCOIN;
+        private static _BTC;
+        private static _CNY;
+        private static _DOLLAR;
+        private static _EUR;
+        private static _EURO;
+        private static _GBP;
+        private static _INR;
+        private static _JPY;
+        private static _KRW;
+        private static _RMB;
+        private static _ROUBLE;
+        private static _RUB;
+        private static _RUBLE;
+        private static _RUPEE;
+        private static _TRY;
+        private static _TURKISH_LIRA;
+        private static _USD;
+        private static _WON;
+        private static _YEN;
+        private static _ALIGN_CENTER;
+        private static _ALIGN_JUSTIFY;
+        private static _ALIGN_LEFT;
+        private static _ALIGN_RIGHT;
+        private static _BOLD;
+        private static _CHAIN;
+        private static _CHAIN_BROKEN;
+        private static _CLIPBOARD;
+        private static _COLUMNS;
+        private static _COPY;
+        private static _CUT;
+        private static _DEDENT;
+        private static _FILE;
+        private static _FILE_O;
+        private static _FILE_TEXT;
+        private static _FILE_TEXT_O;
+        private static _FILES_O;
+        private static _FLOPPY_O;
+        private static _FONT;
+        private static _INDENT;
+        private static _ITALIC;
+        private static _LINK;
+        private static _LIST;
+        private static _LIST_ALT;
+        private static _LIST_OL;
+        private static _LIST_UL;
+        private static _OUTDENT;
+        private static _PAPERCLIP;
+        private static _PASTE;
+        private static _REPEAT;
+        private static _ROTATE_LEFT;
+        private static _ROTATE_RIGHT;
+        private static _SAVE;
+        private static _SCISSORS;
+        private static _STRIKETHROUGH;
+        private static _TABLE;
+        private static _TEXT_HEIGHT;
+        private static _TEXT_WIDTH;
+        private static _TH;
+        private static _TH_LARGE;
+        private static _TH_LIST;
+        private static _UNDERLINE;
+        private static _UNDO;
+        private static _UNLINK;
+        private static _ANGLE_DOUBLE_DOWN;
+        private static _ANGLE_DOUBLE_LEFT;
+        private static _ANGLE_DOUBLE_RIGHT;
+        private static _ANGLE_DOUBLE_UP;
+        private static _ANGLE_DOWN;
+        private static _ANGLE_LEFT;
+        private static _ANGLE_RIGHT;
+        private static _ANGLE_UP;
+        private static _ARROW_CIRCLE_DOWN;
+        private static _ARROW_CIRCLE_LEFT;
+        private static _ARROW_CIRCLE_O_DOWN;
+        private static _ARROW_CIRCLE_O_LEFT;
+        private static _ARROW_CIRCLE_O_RIGHT;
+        private static _ARROW_CIRCLE_O_UP;
+        private static _ARROW_CIRCLE_RIGHT;
+        private static _ARROW_CIRCLE_UP;
+        private static _ARROW_DOWN;
+        private static _ARROW_LEFT;
+        private static _ARROW_RIGHT;
+        private static _ARROW_UP;
+        private static _ARROWS_ALT;
+        private static _CARET_DOWN;
+        private static _CARET_LEFT;
+        private static _CARET_RIGHT;
+        private static _CARET_SQUARE_O_LEFT;
+        private static _CARET_UP;
+        private static _CHEVRON_CIRCLE_DOWN;
+        private static _CHEVRON_CIRCLE_LEFT;
+        private static _CHEVRON_CIRCLE_RIGHT;
+        private static _CHEVRON_CIRCLE_UP;
+        private static _CHEVRON_DOWN;
+        private static _CHEVRON_LEFT;
+        private static _CHEVRON_RIGHT;
+        private static _CHEVRON_UP;
+        private static _HAND_O_DOWN;
+        private static _HAND_O_LEFT;
+        private static _HAND_O_RIGHT;
+        private static _HAND_O_UP;
+        private static _LONG_ARROW_DOWN;
+        private static _LONG_ARROW_LEFT;
+        private static _LONG_ARROW_RIGHT;
+        private static _LONG_ARROW_UP;
+        private static _BACKWARD;
+        private static _COMPRESS;
+        private static _EJECT;
+        private static _EXPAND;
+        private static _FAST_BACKWARD;
+        private static _FAST_FORWARD;
+        private static _FORWARD;
+        private static _PAUSE;
+        private static _PLAY;
+        private static _PLAY_CIRCLE;
+        private static _PLAY_CIRCLE_O;
+        private static _STEP_BACKWARD;
+        private static _STEP_FORWARD;
+        private static _STOP;
+        private static _YOUTUBE_PLAY;
+        private static _ADN;
+        private static _ANDROID;
+        private static _APPLE;
+        private static _BITBUCKET;
+        private static _BITBUCKET_SQUARE;
+        private static _CSS3;
+        private static _DRIBBBLE;
+        private static _DROPBOX;
+        private static _FACEBOOK;
+        private static _FACEBOOK_SQUARE;
+        private static _FLICKR;
+        private static _FOURSQUARE;
+        private static _GITHUB;
+        private static _GITHUB_ALT;
+        private static _GITHUB_SQUARE;
+        private static _GITTIP;
+        private static _GOOGLE_PLUS;
+        private static _GOOGLE_PLUS_SQUARE;
+        private static _HTML5;
+        private static _INSTAGRAM;
+        private static _LINKEDIN;
+        private static _LINKEDIN_SQUARE;
+        private static _LINUX;
+        private static _MAXCDN;
+        private static _PAGELINES;
+        private static _PINTEREST;
+        private static _PINTEREST_SQUARE;
+        private static _RENREN;
+        private static _SKYPE;
+        private static _STACK_EXCHANGE;
+        private static _STACK_OVERFLOW;
+        private static _TRELLO;
+        private static _TUMBLR;
+        private static _TUMBLR_SQUARE;
+        private static _TWITTER;
+        private static _TWITTER_SQUARE;
+        private static _VIMEO_SQUARE;
+        private static _VK;
+        private static _WEIBO;
+        private static _WINDOWS;
+        private static _XING;
+        private static _XING_SQUARE;
+        private static _YOUTUBE;
+        private static _YOUTUBE_SQUARE;
+        private static _AMBULANCE;
+        private static _H_SQUARE;
+        private static _HOSPITAL_O;
+        private static _MEDKIT;
+        private static _STETHOSCOPE;
+        private static _USER_MD;
+        constructor(_value: string);
+        className: string;
+    }
+}
+declare module cubee {
+    class FAIcon extends AUserControl {
+        private static _initialized;
+        private static initFA();
+        private _size;
+        private _color;
+        private _spin;
+        private _icon;
+        private _iElement;
+        private _changeListener;
+        constructor(icon: EIcon);
+        private refreshStyle();
+        protected colorProperty(): ColorProperty;
+        Color: ColorProperty;
+        color: Color;
+        protected sizeProperty(): NumberProperty;
+        Size: NumberProperty;
+        size: number;
+        protected spinProperty(): BooleanProperty;
+        Spin: BooleanProperty;
+        spin: boolean;
+        protected iconProperty(): Property<EIcon>;
+        Icon: Property<EIcon>;
+        icon: EIcon;
     }
 }

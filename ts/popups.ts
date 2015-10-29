@@ -154,11 +154,6 @@ module cubee {
             this.Center.value = value;
         }
 
-        _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent) {
-            return this._popupRoot._doPointerEventClimbingUp(screenX, screenY, x, y, wheelVelocity, altPressed, ctrlPressed, shiftPressed, metaPressed, eventType, button, nativeEvent);
-        }
-
         _layout() {
             this._popupRoot.width = window.innerWidth;
             this._popupRoot.height = window.innerHeight;
@@ -195,17 +190,6 @@ module cubee {
             Popups._popups.forEach((popup) => {
                 popup._layout();
             });
-        }
-
-        static doPointerEventClimbingUp(x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent) {
-            for (var i = Popups._popups.length - 1; i >= 0; i--) {
-                let popup = Popups._popups[i];
-                if (popup._doPointerEventClimbingUp(x, y, x, y, wheelVelocity, altPressed, ctrlPressed, shiftPressed, metaPressed, eventType, button, nativeEvent)) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         constructor() {

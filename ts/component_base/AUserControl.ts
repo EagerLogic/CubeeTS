@@ -56,11 +56,11 @@ module cubee {
             this._draggable.invalidate();
         }
 
-        protected get _Width() {
+        protected widthProperty() {
             return this._width;
         }
         protected get Width() {
-            return this._width;
+            return this.widthProperty();
         }
         protected get width() {
             return this.Width.value;
@@ -70,11 +70,12 @@ module cubee {
         }
 
 
-        protected get _Height() {
+
+        protected heightProperty() {
             return this._height;
         }
         protected get Height() {
-            return this._height;
+            return this.heightProperty();
         }
         protected get height() {
             return this.Height.value;
@@ -83,11 +84,12 @@ module cubee {
             this.Height.value = value;
         }
 
-        protected get _Background() {
+
+        protected backgroundProperty() {
             return this._background;
         }
         protected get Background() {
-            return this._background;
+            return this.backgroundProperty();
         }
         protected get background() {
             return this.Background.value;
@@ -96,11 +98,12 @@ module cubee {
             this.Background.value = value;
         }
 
-        protected get _Shadow() {
+
+        protected shadowProperty() {
             return this._shadow;
         }
         protected get Shadow() {
-            return this._shadow;
+            return this.shadowProperty();
         }
         protected get shadow() {
             return this.Shadow.value;
@@ -108,6 +111,7 @@ module cubee {
         protected set shadow(value) {
             this.Shadow.value = value;
         }
+
 
         get Draggable() {
             return this._draggable;

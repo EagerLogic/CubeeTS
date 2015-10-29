@@ -21,9 +21,19 @@ module cubee {
             return Color._TRANSPARENT;
         }
 
+        private static _WHITE = Color.getArgbColor(0xffffffff);
+        static get WHITE() {
+            return Color._WHITE;
+        }
+
         private static _BLACK = Color.getArgbColor(0xff000000);
         static get BLACK() {
             return Color._BLACK;
+        }
+
+        private static _LIGHT_GRAY = Color.getArgbColor(0xffcccccc);
+        static get LIGHT_GRAY() {
+            return Color._LIGHT_GRAY;
         }
 
         public static getArgbColor(argb: number): Color {
@@ -432,7 +442,7 @@ module cubee {
     }
 
     export class FontFamily implements IStyle {
-        
+
         private static _arial = new FontFamily("Arial, Helvetica, sans-serif");
         public static get Arial() {
             return FontFamily._arial;
@@ -489,6 +499,74 @@ module cubee {
         get css() {
             return this._css;
         }
+    }
+
+    export enum EScrollBarPolicy {
+
+        VISIBLE,
+        AUTO,
+        HIDDEN
+
+    }
+
+    export enum EPictureSizeMode {
+
+        NORMAL,
+        CENTER,
+        STRETCH,
+        FILL,
+        ZOOM,
+        FIT_WIDTH,
+        FIT_HEIGHT
+
+    }
+
+    export class Image implements IStyle {
+
+        private _onLoad = new Event<EventArgs>();
+
+        private _width = 0;
+        private _height = 0;
+        private _loaded = false;
+
+        constructor(private _url: string) {
+            if (_url == null) {
+                throw "The url parameter can not be null.";
+            }
+            let e = <HTMLImageElement>document.createElement("img");
+            e.addEventListener("load", () => {
+                this._width = e.width;
+                this._height = e.height;
+                this._loaded = true;
+                this._onLoad.fireEvent(new EventArgs(this));
+            });
+            e.src = _url;
+        }
+
+        get url() {
+            return this._url;
+        }
+
+        get onLoad() {
+            return this._onLoad;
+        }
+
+        get width() {
+            return this._width;
+        }
+
+        get height() {
+            return this._height;
+        }
+
+        get loaded() {
+            return this._loaded;
+        }
+
+        apply(element: HTMLElement) {
+            element.setAttribute("src", this.url);
+        }
+
     }
 
 }

@@ -6,20 +6,38 @@
 /// <reference path="component_base/AComponent.ts"/> 
 /// <reference path="component_base/ALayout.ts"/> 
 /// <reference path="component_base/AUserControl.ts"/> 
+/// <reference path="component_base/AView.ts"/> 
 
 /// <reference path="layouts/Panel.ts"/>  
-/// <reference path="layouts/Hbox.ts"/>   
-/// <reference path="layouts/Vbox.ts"/>    
+/// <reference path="layouts/HBox.ts"/>   
+/// <reference path="layouts/VBox.ts"/>    
+/// <reference path="layouts/ScrollBox.ts"/>    
    
 /// <reference path="components/Label.ts"/>  
+/// <reference path="components/Button.ts"/>    
+/// <reference path="components/TextBox.ts"/>    
+/// <reference path="components/PasswordBox.ts"/>    
+/// <reference path="components/TextArea.ts"/>    
+/// <reference path="components/CheckBox.ts"/>     
+/// <reference path="components/ComboBox.ts"/>     
+/// <reference path="components/PictureBox.ts"/>     
 
-/// <reference path="popups.ts"/> 
+/// <reference path="popups.ts"/>  
+
+// html component
+// hyperlink
+
+// faicon
+// eicon
+
+// EVENTS
+
 
 module cubee {                
 
     export class CubeePanel {        
 
-        private _layoutRunOnce: RunOnce = null;
+        private _layoutRunOnce: RunOnce = null; 
 
         private _contentPanel: Panel = null;
         private _rootComponent: AComponent = null;
@@ -112,19 +130,6 @@ module cubee {
                 this._contentPanel.children.add(rootComponent);
                 this._rootComponent = rootComponent;
             }
-        }
-
-        _doPointerEventClimbingUp(screenX: number, screenY: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean, eventType: number, button: number, nativeEvent: MouseEvent) {
-            if (Popups.doPointerEventClimbingUp(screenX, screenY, wheelVelocity, altPressed, ctrlPressed, shiftPressed, metaPressed, eventType, button, nativeEvent)) {
-                return true;
-            }
-
-            if (this._element.style.position != "absolute") {
-                screenX = screenX + window.scrollX - this._left;
-                screenY = screenY + window.scrollY - this._top;
-            }
-            return this._contentPanel._doPointerEventClimbingUp(screenX, screenY, screenX, screenY, wheelVelocity, altPressed, ctrlPressed, shiftPressed, metaPressed, eventType, button, nativeEvent);
         }
 
         get ClientWidth() {

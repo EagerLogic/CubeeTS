@@ -3,12 +3,36 @@ module cubee {
     export class EventArgs {
         constructor(public sender: Object) { }
     }
+    
+    export interface IListenerCallback<T> {
+        onAdded(listener: IEventListener<T>): void;
+        onRemoved(listener: IEventListener<T>): void;
+    }
+    
+    export class HtmlEventListenerCallback<T> implements IListenerCallback<T> {
+        
+        constructor(private _element: HTMLElement, private _eventType: string) {
+            
+        }
+        
+        onAdded(listener: IEventListener<T>): void {
+            (<any>listener).$$nativeListener = function (eventArgs: T) {
+                listener(eventArgs);
+            }
+            this._element.addEventListener(this._eventType, (<any>listener).$$nativeListener);
+        }
+        
+        onRemoved(listener: IEventListener<T>): void {
+            this._element.removeEventListener(this._eventType, (<any>listener).$$nativeListener);
+        }
+        
+    }
 
     export class Event<T> {
 
-        private listeners: IEventListener<T>[] = [];
+        private _listeners: IEventListener<T>[] = [];
 
-        public Event() {
+        constructor(private _listenerCallback: IListenerCallback<T> = null) {
         }
 
         addListener(listener: IEventListener<T>) {
@@ -20,26 +44,42 @@ module cubee {
                 return;
             }
 
-            this.listeners.push(listener);
+            this._listeners.push(listener);
+            
+            if (this._listenerCallback != null) {
+                this._listenerCallback.onAdded(listener);
+            }
         }
 
         removeListener(listener: IEventListener<T>) {
-            var idx = this.listeners.indexOf(listener);
+            var idx = this._listeners.indexOf(listener);
             if (idx < 0) {
                 return;
             }
-            this.listeners.splice(idx, 1);
+            this._listeners.splice(idx, 1);
+            
+            if (this._listenerCallback != null) {
+                this._listenerCallback.onRemoved(listener);
+            }
         }
 
         hasListener(listener: IEventListener<T>) {
-            return this.listeners.indexOf(listener) > -1;
+            return this._listeners.indexOf(listener) > -1;
         }
 
         fireEvent(args: T) {
-            for (var l in this.listeners) {
+            for (var l in this._listeners) {
                 let listener: IEventListener<T> = l;
                 listener(args);
             }
+        }
+        
+        get listenerCallback() {
+            return this._listenerCallback;
+        }
+        
+        set listenerCallback(value: IListenerCallback<T>) {
+            this._listenerCallback = value;
         }
 
     }
@@ -168,108 +208,11 @@ module cubee {
         }
     }
 
-    export class MouseDragEventArgs {
-        constructor(
-            public screenX: number,
-            public screenY: number,
-            public deltaX: number,
-            public deltaY: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public sender: Object) { }
-    }
-
-    export class MouseUpEventArgs {
-        constructor(
-            public screenX: number,
-            public screenY: number,
-            public deltaX: number,
-            public deltaY: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public button: number,
-            public nativeEvent: MouseEvent,
-            public sender: Object) { }
-    }
-
-    export class MouseDownEventArgs {
-        constructor(
-            public screenX: number,
-            public screenY: number,
-            public deltaX: number,
-            public deltaY: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public button: number,
-            public nativeEvent: MouseEvent,
-            public sender: Object) { }
-    }
-
-    export class MouseMoveEventArgs {
-        constructor(
-            public screenX: number,
-            public screenY: number,
-            public x: number,
-            public y: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public sender: Object) { }
-    }
-
-    export class MouseWheelEventArgs {
-        constructor(
-            public wheelVelocity: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public sender: Object) { }
-    }
-
-    export class ClickEventArgs {
-        constructor(
-            public screenX: number,
-            public screenY: number,
-            public deltaX: number,
-            public deltaY: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public button: number,
-            public sender: Object) { }
-    }
-
-    export class KeyEventArgs {
-        constructor(
-            public keyCode: number,
-            public altPressed: boolean,
-            public ctrlPressed: boolean,
-            public shiftPressed: boolean,
-            public metaPressed: boolean,
-            public sender: Object,
-            public nativeEvent: KeyboardEvent
-        ) { }
-    }
-
     export class ParentChangedEventArgs extends EventArgs {
         constructor(public newParent: ALayout,
             public sender: Object) {
             super(sender);
         }
-    }
-
-    export class ContextMenuEventArgs {
-        constructor(public nativeEvent: UIEvent,
-            public sender: Object) { }
     }
 
 }

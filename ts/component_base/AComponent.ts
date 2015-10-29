@@ -15,171 +15,6 @@ module cubee {
 
     export abstract class AComponent {
 
-        //        private static pointerDownEvents: MouseDownEventLog[] = [];
-        //
-        //        private static logPointerDownEvent(item: MouseDownEventLog) {
-        //            AComponent.pointerDownEvents.push(item);
-        //        }
-        //
-        //        static fireDragEvents(screenX: number, screenY: number, altPressed: boolean, ctrlPressed: boolean,
-        //            shiftPressed: boolean, metaPressed: boolean) {
-        //            AComponent.pointerDownEvents.forEach((log) => {
-        //                let args = new MouseDragEventArgs(screenX, screenY, screenX - log.screenX,
-        //                    screenY - log.screenY, altPressed, ctrlPressed, shiftPressed, metaPressed, log.component);
-        //                log.component.onMouseDrag.fireEvent(args);
-        //            });
-        //        }
-        //
-        //        static fireUpEvents(screenX: number, screenY: number, altPressed: boolean, ctrlPressed: boolean,
-        //            shiftPressed: boolean, metaPressed: boolean, button: number, nativeEvent: MouseEvent) {
-        //            var stamp = Date.now();
-        //            AComponent.pointerDownEvents.forEach((log) => {
-        //                let args = new MouseUpEventArgs(screenX, screenY, screenX - log.screenX,
-        //                    screenY - log.screenY, altPressed, ctrlPressed, shiftPressed, metaPressed, button, nativeEvent, log.component);
-        //                log.component.onMouseUp.fireEvent(args);
-        //                if (stamp - log.timestamp < 500) {
-        //                    log.component.onClick.fireEvent(new ClickEventArgs(screenX, screenY, log.x, log.y,
-        //                        altPressed, ctrlPressed, shiftPressed, metaPressed, button, log.component));
-        //                }
-        //            });
-        //            AComponent.pointerDownEvents = [];
-        //        }
-
-        //        public static addNativeEvent(element: Element, eventName: string, nativeEventListener: { (event: UIEvent): any }, useCapture: boolean) {
-        //            element.addEventListener(eventName, nativeEventListener, useCapture);
-        //        }
-        //
-        //        public static removeNativeEvent(element: Element, eventName: string, nativeEventListener: { (event: UIEvent): any }, useCapture: boolean) {
-        //            element.removeEventListener(eventName, nativeEventListener, useCapture);
-        //        }
-
-        //        private nativeEventListener: INativeEventListener = (event: UIEvent): any => {
-        //            this.handleNativeEvent(event);
-        //        };
-
-        //        private handleNativeEvent(event: UIEvent) {
-        //            if (this instanceof TextBox) {
-        //                if (event.type == "keyup") {
-        //                    EventQueue.Instance.invokePrior(() => {
-        //                        (<TextBox>this).textProperty().set(getElement().getPropertyString("value"));
-        //                    });
-        //                }
-        //            }
-        //
-        //            //var x = event.clientX;
-        //            //var y = event.clientY;
-        //            //var wheelVelocity = event.velocityY;
-        //            var parent: AComponent;
-        //            var keyArgs: KeyEventArgs;
-        //            var cp = this.getCubeePanel();
-        //            var kevt: KeyboardEvent = null;
-        //            switch (event.type) {
-        //                case "mousedown":
-        //                case "mousewheel":
-        //                    event.stopPropagation();
-        //                    if (cp != null) {
-        //                        cp.doPointerEventClimbingUp(x, y, wheelVelocity,
-        //                            event.getAltKey(), event.getCtrlKey(), event.getShiftKey(), event.getMetaKey(),
-        //                            event.getTypeInt(), event.getButton(), event);
-        //                    } else {
-        //                        Popups.doPointerEventClimbingUp(x, y, wheelVelocity,
-        //                            event.getAltKey(), event.getCtrlKey(), event.getShiftKey(), event.getMetaKey(),
-        //                            event.getTypeInt(), event.getButton(), event);
-        //                    }
-        //
-        //                    break;
-        //                case "mousemove":
-        //                    event.stopPropagation();
-        //                    if (AComponent.pointerDownEvents.length > 0) {
-        //                        let evt = <MouseEvent>event;
-        //                        AComponent.fireDragEvents(evt.clientX, evt.clientY, evt.altKey, evt.ctrlKey,
-        //                            evt.shiftKey, evt.metaKey);
-        //                    } else {
-        //                        let wevt = <WheelEvent>event;
-        //                        if (cp != null) {
-        //                            cp.doPointerEventClimbingUp(wevt.clientX, wevt.clientY, wevt.deltaY,
-        //                                wevt.altKey, wevt.ctrlKey, wevt.shiftKey, wevt.metaKey,
-        //                                wevt.type, wevt.button, wevt);
-        //                        } else {
-        //                            Popups.doPointerEventClimbingUp(wevt.clientX, wevt.clientY, wevt.deltaY,
-        //                                wevt.altKey, wevt.ctrlKey, wevt.shiftKey, wevt.metaKey,
-        //                                wevt.type, wevt.button, wevt);
-        //                        }
-        //                    }
-        //                    break;
-        //
-        //                case "mouseup":
-        //                    event.stopPropagation();
-        //                    let evt = <MouseEvent>event;
-        //                    AComponent.fireDragEvents(evt.clientX, evt.clientY, evt.altKey, evt.ctrlKey,
-        //                        evt.shiftKey, evt.metaKey);
-        //                    break;
-        //                case "mouseover":
-        //                    if (this._pointerTransparent.Value) {
-        //                        return;
-        //                    }
-        //
-        //                    // check handle pointer
-        //                    parent = this;
-        //                    while (parent != null) {
-        //                        if (!parent.handlePointer) {
-        //                            return;
-        //                        }
-        //                        parent = parent.Parent;
-        //                    }
-        //                    if (!this.hovered) {
-        //                        this.onMouseEnter.fireEvent(new EventArgs(this));
-        //                    }
-        //                    break;
-        //                case "mouseout":
-        //                    if (this.pointerTransparent) {
-        //                        return;
-        //                    }
-        //
-        //                    // check handle pointer
-        //                    parent = this;
-        //                    while (parent != null) {
-        //                        if (!parent.handlePointer) {
-        //                            return;
-        //                        }
-        //                        parent = parent.Parent;
-        //                    }
-        //                    if (this.hovered) {
-        //                        /*int compX = getLeft();
-        //                         int compY = getTop();
-        //                         if (x >= compX && y >= compY && x <= compX + boundsWidthProperty().get() && y <= compY + boundsHeightProperty().get()) {
-        //                         return;
-        //                         }*/
-        //                        this.onMouseLeave.fireEvent(new EventArgs(this));
-        //                    }
-        //                    break;
-        //                case "keydwon":
-        //                    event.stopPropagation();
-        //                    kevt = <KeyboardEvent>event;
-        //                    let keyArgs = new KeyEventArgs(kevt.keyCode, kevt.altKey, kevt.ctrlKey,
-        //                        kevt.shiftKey, kevt.metaKey, this, kevt);
-        //                    this.onKeyDown.fireEvent(keyArgs);
-        //                    break;
-        //                case "keypress":
-        //                    event.stopPropagation();
-        //                    kevt = <KeyboardEvent>event;
-        //                    keyArgs = new KeyEventArgs(kevt.keyCode, kevt.altKey, kevt.ctrlKey,
-        //                        kevt.shiftKey, kevt.metaKey, this, kevt);
-        //                    this.onKeyPress.fireEvent(keyArgs);
-        //                    break;
-        //                case "keyup":
-        //                    event.stopPropagation();
-        //                    kevt = <KeyboardEvent>event;
-        //                    keyArgs = new KeyEventArgs(kevt.keyCode, kevt.altKey, kevt.ctrlKey,
-        //                        kevt.shiftKey, kevt.metaKey, this, kevt);
-        //                    this.onKeyUp.fireEvent(keyArgs);
-        //                    break;
-        //                case "contextmenu":
-        //                    this.onContextMenu.fireEvent(new ContextMenuEventArgs(event, this));
-        //                    break;
-        //            }
-        //        }
-
         private _translateX = new NumberProperty(0, false, false);
         private _translateY = new NumberProperty(0, false, false);
         private _rotate = new NumberProperty(0.0, false, false);
@@ -220,19 +55,19 @@ module cubee {
         private _hoveredSetter = new Property<boolean>(false, false, false);
         private _pressed = new Property<boolean>(false, false, true);
         private _pressedSetter = new Property<boolean>(false, false, false);
-        private _onClick = new Event<ClickEventArgs>();
-        private _onMouseDown = new Event<MouseDownEventArgs>();
-        private _onMouseDrag = new Event<MouseDragEventArgs>();
-        private _onMouseMove = new Event<MouseMoveEventArgs>();
-        private _onMouseUp = new Event<MouseUpEventArgs>();
-        private _onMouseEnter = new Event<Object>();
-        private _onMouseLeave = new Event<Object>();
-        private _onMouseWheel = new Event<MouseWheelEventArgs>();
-        private _onKeyDown = new Event<KeyEventArgs>();
-        private _onKeyPress = new Event<KeyEventArgs>();
-        private _onKeyUp = new Event<KeyEventArgs>();
+        private _onClick = new Event<MouseEvent>();
+        private _onMouseDown = new Event<MouseEvent>();
+        private _onMouseDrag = new Event<MouseEvent>();
+        private _onMouseMove = new Event<MouseEvent>();
+        private _onMouseUp = new Event<MouseEvent>();
+        private _onMouseEnter = new Event<MouseEvent>();
+        private _onMouseLeave = new Event<MouseEvent>();
+        private _onMouseWheel = new Event<MouseEvent>();
+        private _onKeyDown = new Event<KeyboardEvent>();
+        private _onKeyPress = new Event<KeyboardEvent>();
+        private _onKeyUp = new Event<KeyboardEvent>();
         private _onParentChanged = new Event<ParentChangedEventArgs>();
-        private _onContextMenu = new Event<ContextMenuEventArgs>();
+        private _onContextMenu = new Event<Object>();
         private _left = 0;
         private _top = 0;
         private _element: HTMLElement;
@@ -384,10 +219,17 @@ module cubee {
             this._boundsLeft.initReadonlyBind(this._boundsLeftSetter);
             this._boundsTop.initReadonlyBind(this._boundsTopSetter);
             
-            // TODO replace event handling mechanism
-            //DOM.setEventListener(getElement(), nativeEventListener);
-            // sinking all the events
-            //DOM.sinkEvents(getElement(), -1);
+            this._onClick = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "click"));
+            this._onMouseDown = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mousedown"));
+            this. _onMouseMove = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mousemove"));
+            this. _onMouseUp = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mouseup"));
+            this. _onMouseEnter = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mouseenter"));
+            this. _onMouseLeave = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mouseleave"));
+            this. _onMouseWheel = new Event<MouseEvent>(new HtmlEventListenerCallback(this._element, "mousewheel"));
+            this. _onKeyDown = new Event<KeyboardEvent>(new HtmlEventListenerCallback(this._element, "keydown"));
+            this. _onKeyPress = new Event<KeyboardEvent>(new HtmlEventListenerCallback(this._element, "keypress"));
+            this. _onKeyUp = new Event<KeyboardEvent>(new HtmlEventListenerCallback(this._element, "keyup"));
+            this. _onContextMenu = new Event<Object>(new HtmlEventListenerCallback(this._element, "contextmenu"));
 
             this._onMouseEnter.addListener(() => {
                 this._hoveredSetter.value = true;
@@ -589,45 +431,29 @@ module cubee {
             this.TranslateY.value = value;
         }
         
-        
-
-        //	public final DoubleProperty rotateProperty() {
-        //		return rotate;
-        //	}
-        //
-        //	public final DoubleProperty scaleXProperty() {
-        //		return scaleX;
-        //	}
-        //
-        //	public final DoubleProperty scaleYProperty() {
-        //		return scaleY;
-        //	}
-        //
-        //	public final DoubleProperty transformCenterXProperty() {
-        //		return transformCenterX;
-        //	}
-        //
-        //	public final DoubleProperty transformCenterYProperty() {
-        //		return transformCenterY;
-        //	}
-        
-        get Padding() {
+        protected paddingProperty() {
             return this._padding;
         }
-        get padding() {
+        protected get Padding() {
+            return this.paddingProperty();
+        }
+        protected get padding() {
             return this.Padding.value;
         }
-        set padding(value) {
+        protected set padding(value) {
             this.Padding.value = value;
         }
 
-        get Border() {
+        protected borderProperty() {
             return this._border;
         }
-        get border() {
+        protected get Border() {
+            return this.borderProperty();
+        }
+        protected get border() {
             return this.Border.value;
         }
-        set border(value) {
+        protected set border(value) {
             this.Border.value = value;
         }
 
@@ -711,8 +537,11 @@ module cubee {
             this.BoundsTop.value = value;
         }
 
-        protected get MinWidth() {
+        protected minWidthProperty() {
             return this._minWidth;
+        }
+        protected get MinWidth() {
+            return this.minWidthProperty();
         }
         protected get minWidth() {
             return this.MinWidth.value;
@@ -721,8 +550,12 @@ module cubee {
             this.MinWidth.value = value;
         }
 
-        protected get MinHeight() {
+
+        protected minHeightProperty() {
             return this._minHeight;
+        }
+        protected get MinHeight() {
+            return this.minHeightProperty();
         }
         protected get minHeight() {
             return this.MinHeight.value;
@@ -731,8 +564,12 @@ module cubee {
             this.MinHeight.value = value;
         }
 
-        protected get MaxWidth() {
+
+        protected maxWidthProperty() {
             return this._maxWidth;
+        }
+        protected get MaxWidth() {
+            return this.maxWidthProperty();
         }
         protected get maxWidth() {
             return this.MaxWidth.value;
@@ -741,8 +578,12 @@ module cubee {
             this.MaxWidth.value = value;
         }
 
-        protected get MaxHeight() {
+
+        protected maxHeightProperty() {
             return this._maxHeight;
+        }
+        protected get MaxHeight() {
+            return this.maxHeightProperty();
         }
         protected get maxHeight() {
             return this.MaxHeight.value;
@@ -750,6 +591,7 @@ module cubee {
         protected set maxHeight(value) {
             this.MaxHeight.value = value;
         }
+
 
         /**
          * Sets the base position of this component relative to the parent's top-left corner. This method is called from a
@@ -926,207 +768,6 @@ module cubee {
             return this._top;
         }
 
-        /**
-         * This method is called by the parent of this component when a pointer event is occured. The goal of this method is
-         * to decide if this component wants to handle the event or not, and delegate the event to child components if
-         * needed.
-         *
-         * @param screenX The x coordinate of the pointer relative to the screen's top-left corner.
-         * @param screenY The y coordinate of the pointer relative to the screen's top-left corner.
-         * @param parentScreenX The x coordinate of the pointer relative to the parent's top-left corner.
-         * @param parentScreenY The y coordinate of the pointer relative to the parent's top-left corner.
-         * @param x The x coordinate of the pointer relative to this component's top-left corner.
-         * @param y The y coordinate of the pointer relative to this component's top-left corner.
-         * @param wheelVelocity The mouse wheel velocity value.
-         * @param type The type of the event. Valid values are listed in PointerEventArgs class.
-         * @param altPressed Indicates if the alt key is pressed when the event occured or not.
-         * @param ctrlPressed Indicates if the ctrl key is pressed when the event occured or not.
-         * @param shiftPressed Indicates if the shift key is pressed when the event occured or not.
-         * @param metaPressed Indicates if the meta key is pressed when the event occured or not.
-         *
-         * @return True if the event is fully handled and underlaying components can't handle this event, otherwise false if
-         * underlaying components can handle this event.
-         */
-        _doPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean
-            , eventType: number, button: number, nativeEvent: UIEvent) {
-            if (!this._handlePointer.value) {
-                return false;
-            }
-            if (this._pointerTransparent.value) {
-                return false;
-            }
-            if (this._enabled.value) {
-                return true;
-            }
-            if (!this._visible.value) {
-                return false;
-            }
-            this.onPointerEventClimbingUp(screenX, screenY, x, y, wheelVelocity, altPressed,
-                ctrlPressed, shiftPressed, metaPressed, eventType, button);
-            return this.onPointerEventFallingDown(screenX, screenY, x, y, wheelVelocity, altPressed,
-                ctrlPressed, shiftPressed, metaPressed, eventType, button, nativeEvent);
-        }
-
-        //	boolean doPointerEventFallingDown(int screenX, int screenY, int parentScreenX, int parentScreenY,
-        //			int x, int y, int wheelVelocity, boolean altPressed, boolean ctrlPressed, boolean shiftPressed,
-        //			boolean metaPressed, int type) {
-        //		return onPointerEventFallingDown(screenX, screenY, parentScreenX, parentScreenY, x, y, wheelVelocity, altPressed,
-        //				ctrlPressed, shiftPressed, metaPressed, type);
-        //	}
-        /**
-         * This method is called when a pointer event is climbing up on the component hierarchy. The goal of this method is
-         * to decide if the event can reach child components or not. In the most of the cases you don't need to overwrite
-         * this method. The default implementation is returns true.
-         *
-         * @param screenX The x coordinate of the pointer relative to the screen's top-left corner.
-         * @param screenY The y coordinate of the pointer relative to the screen's top-left corner.
-         * @param x The x coordinate of the pointer relative to this component's top-left corner.
-         * @param y The y coordinate of the pointer relative to this component's top-left corner.
-         * @param wheelVelocity The mouse wheel velocity value.
-         * @param type The type of the event. Valid values are listed in PointerEventArgs class.
-         * @param altPressed Indicates if the alt key is pressed when the event occured or not.
-         * @param ctrlPressed Indicates if the ctrl key is pressed when the event occured or not.
-         * @param shiftPressed Indicates if the shift key is pressed when the event occured or not.
-         * @param metaPressed Indicates if the meta key is pressed when the event occured or not.
-         *
-         * @return False if this event can't reach overlaying components, or true if overlaying components can also get the
-         * climbing up event.
-         */
-        protected onPointerEventClimbingUp(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean
-            , eventType: number, button: number) {
-            return true;
-        }
-
-        /**
-         * This method is called when a pointer event is falling down on the component hierarchy. The goal of this method is
-         * to fire events if needed, and in the result type define if the underlaying components can process this event too.
-         * The default implementation is fires the associated event, and returns true.
-         *
-         * @param screenX The x coordinate of the pointer relative to the screen's top-left corner.
-         * @param screenY The y coordinate of the pointer relative to the screen's top-left corner.
-         * @param x The x coordinate of the pointer relative to this component's top-left corner.
-         * @param y The y coordinate of the pointer relative to this component's top-left corner.
-         * @param wheelVelocity The mouse wheel velocity value.
-         * @param type The type of the event. Valid values are listed in PointerEventArgs class.
-         * @param altPressed Indicates if the alt key is pressed when the event occured or not.
-         * @param ctrlPressed Indicates if the ctrl key is pressed when the event occured or not.
-         * @param shiftPressed Indicates if the shift key is pressed when the event occured or not.
-         * @param metaPressed Indicates if the meta key is pressed when the event occured or not.
-         *
-         * @return True if this event is fully processed, and underlaying components can't process this event, or false if
-         * underlaying components can also get the falling down event.
-         */
-        protected onPointerEventFallingDown(screenX: number, screenY: number, x: number, y: number, wheelVelocity: number,
-            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean,
-            eventType: number, button: number, nativeEvent: UIEvent) {
-            switch (eventType) {
-                case MouseEventTypes.MOUSE_DOWN:
-                    var mdea = new MouseDownEventArgs(screenX, screenY, x, y, altPressed, ctrlPressed,
-                        shiftPressed, metaPressed, button, <MouseEvent>nativeEvent, this);
-                    //this.registerDownEvent(screenX, screenY, x, y, altPressed, ctrlPressed, shiftPressed, metaPressed);
-                    this._onMouseDown.fireEvent(mdea);
-                    break;
-                case MouseEventTypes.MOUSE_MOVE:
-                    var mmea = new MouseMoveEventArgs(screenX, screenY, x, y, altPressed, ctrlPressed,
-                        shiftPressed, metaPressed, this);
-                    this._onMouseMove.fireEvent(mmea);
-                    break;
-                case MouseEventTypes.MOUSE_ENTER:
-                    this._onMouseEnter.fireEvent(new EventArgs(this));
-                    break;
-                case MouseEventTypes.MOUSE_LEAVE:
-                    this._onMouseLeave.fireEvent(new EventArgs(this));
-                    break;
-                case MouseEventTypes.MOUSE_WHEEL:
-                    this._onMouseWheel.fireEvent(new MouseWheelEventArgs(wheelVelocity, altPressed, ctrlPressed, shiftPressed,
-                        metaPressed, this));
-                    break;
-            }
-            return true;
-        }
-
-        //        protected registerDownEvent(screenX: number, screenY: number, x: number, y: number,
-        //            altPressed: boolean, ctrlPressed: boolean, shiftPressed: boolean, metaPressed: boolean) {
-        //            AComponent.logPointerDownEvent(new MouseDownEventLog(this, screenX, screenY, x, y));
-        //        }
-
-        /**
-         * Indicates if this component is intersects the given point. The x and y coordinate is relative to the parent's
-         * top-left coordinate.
-         *
-         * @param x The x coordinate of the point.
-         * @param y The y coordinate of the point.
-         *
-         * @return True if this component is intersects the given point, otherwise false.
-         */
-        _isIntersectsPoint(x: number, y: number) {
-            // measured positions
-            var x1 = this._left + this._translateX.value;
-            var y1 = this._top + this._translateY.value;
-            var x2 = x1 + this._measuredWidth.value;
-            var y2 = y1;
-            var x3 = x2;
-            var y3 = y2 + this._measuredHeight.value;
-            var x4 = x1;
-            var y4 = y3;
-
-            // scale points
-            if (this._scaleX.value != 1.0) {
-                x1 = (x1 - ((x2 - x1) * this._transformCenterX.value * this._scaleX.value)) | 0;
-                x2 = (x1 + ((x2 - x1) * (1 - this._transformCenterX.value) * this._scaleX.value)) | 0;
-                x3 = x2;
-                x4 = x1;
-            }
-            if (this._scaleY.value != 1.0) {
-                y1 = (y1 - ((y2 - y1) * this._transformCenterY.value * this._scaleY.value)) | 0;
-                y4 = (y4 + ((y4 - y1) * (1 - this._transformCenterY.value) * this._scaleY.value)) | 0;
-                y2 = y1;
-                y3 = y4;
-            }
-
-            // rotatePoints
-            if (this.rotate != 0.0) {
-                var rpx = (x1 + ((x2 - x1) * this.transformCenterX)) | 0;
-                var rpy = (y1 + ((y4 - y1) * this.transformCenterX)) | 0;
-                var tl = this.rotatePoint(0, 0, x1 - rpx, y1 - rpy, this.rotate);
-                var tr = this.rotatePoint(0, 0, x2 - rpx, y2 - rpy, this.rotate);
-                var br = this.rotatePoint(0, 0, x3 - rpx, y3 - rpy, this.rotate);
-                var bl = this.rotatePoint(0, 0, x4 - rpx, y4 - rpy, this.rotate);
-                x1 = tl.x + rpx;
-                y1 = tl.y + rpy;
-                x2 = tr.x + rpx;
-                y2 = tr.y + rpy;
-                x3 = br.x + rpx;
-                y3 = br.y + rpy;
-                x4 = bl.x + rpx;
-                y4 = bl.y + rpy;
-            }
-
-            var cnt = 0;
-            if (this.isPointIntersectsLine(x, y, x1, y1, x2, y2)) {
-                cnt++;
-            }
-            if (this.isPointIntersectsLine(x, y, x2, y2, x3, y3)) {
-                cnt++;
-            }
-            if (this.isPointIntersectsLine(x, y, x3, y3, x4, y4)) {
-                cnt++;
-            }
-            if (this.isPointIntersectsLine(x, y, x4, y4, x1, y1)) {
-                cnt++;
-            }
-            return cnt == 1 || cnt == 3;
-        }
-
-        private isPointIntersectsLine(px: number, py: number, lx1: number, ly1: number, lx2: number, ly2: number) {
-            /* ((poly[i][1] > y) != (poly[j][1] > y)) and \
-             (x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0])
-             */
-            return ((ly1 > py) != (ly2 > py)) && (px < (lx2 - lx1) * ((py - ly1)) / (ly2 - ly1) + lx1);
-        }
-
         get Rotate() {
             return this._rotate;
         }
@@ -1196,16 +837,6 @@ module cubee {
         set pressed(value) {
             this.Pressed.value = value;
         }
-
-
-
-        //        public final int getScreenX() {
-        //            return getElement().getAbsoluteLeft();
-        //        }
-        //
-        //        public final int getScreenY() {
-        //            return getElement().getAbsoluteTop();
-        //        }
         
     }
 

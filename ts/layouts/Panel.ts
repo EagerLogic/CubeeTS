@@ -2,45 +2,61 @@ module cubee {
 
     export class Panel extends AUserControl {
         
-        public get Width() {
-            return this._Width;
+        protected widthProperty() {
+            return super.widthProperty();
         }
-        public get width() {
+        get Width() {
+            return this.widthProperty();
+        }
+        get width() {
             return this.Width.value;
         }
-        public set width(value) {
+        set width(value) {
             this.Width.value = value;
         }
 
-        public get Height() {
-            return this._Height;
+
+        protected heightProperty() {
+            return super.heightProperty();
         }
-        public get height() {
+        get Height() {
+            return this.heightProperty();
+        }
+        get height() {
             return this.Height.value;
         }
-        public set height(value) {
+        set height(value) {
             this.Height.value = value;
         }
 
-        public get Background() {
-            return this._Background;
+
+        protected backgroundProperty() {
+            return super.backgroundProperty();
         }
-        public get background() {
+        get Background() {
+            return this.backgroundProperty();
+        }
+        get background() {
             return this.Background.value;
         }
-        public set background(value) {
+        set background(value) {
             this.Background.value = value;
         }
 
-        public get Shadow() {
-            return this._Shadow;
+
+        protected shadowProperty() {
+            return super.shadowProperty();
         }
-        public get shadow() {
+        get Shadow() {
+            return this.shadowProperty();
+        }
+        get shadow() {
             return this.Shadow.value;
         }
-        public set shadow(value) {
+        set shadow(value) {
             this.Shadow.value = value;
         }
+
         
         public get children() {
             return this.children_inner;
