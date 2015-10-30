@@ -518,6 +518,7 @@ declare module cubee {
         private _transformChangedListener;
         private _postConstructRunOnce;
         constructor(rootElement: HTMLElement);
+        private getClassName();
         private invokePostConstruct();
         protected postConstruct(): void;
         setCubeePanel(cubeePanel: CubeePanel): void;

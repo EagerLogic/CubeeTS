@@ -89,6 +89,7 @@ module cubee {
          */
         constructor(rootElement: HTMLElement) {
             this._element = rootElement;
+            this._element.setAttribute("data-cubee-component", this.getClassName());
             this._element.style.boxSizing = "border-box";
             this._element.setAttribute("draggable", "false");
             this._element.style.position = "absolute";
@@ -244,9 +245,15 @@ module cubee {
                 this._pressedSetter.value = false;
             });
         }
+        
+        private getClassName() {
+            var funcNameRegex = /function (.{1,})\(/;
+            var results  = (funcNameRegex).exec(this["constructor"].toString());
+            return (results && results.length > 1) ? results[1] : "";
+        }
 
         private invokePostConstruct() {
-            this._postConstructRunOnce.run();
+            this._postConstructRunOnce.run(); 
         }
 
         protected postConstruct() {

@@ -60,7 +60,7 @@ module cubee {
             this._iElement.style.color = this._color.value.toCSS();
 
             if (this.spin) {
-                this._iElement.className = this._iElement.className = "fa-spin";
+                this._iElement.className = this._iElement.className + " fa-spin";
             }
             this.element.style.lineHeight = this.size + "px";
             this._iElement.style.backfaceVisibility = "hidden";

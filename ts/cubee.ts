@@ -16,7 +16,7 @@
 /// <reference path="components/Label.ts"/>  
 /// <reference path="components/Button.ts"/>    
 /// <reference path="components/TextBox.ts"/>    
-/// <reference path="components/PasswordBox.ts"/>    
+/// <reference path="components/PasswordBox.ts"/>     
 /// <reference path="components/TextArea.ts"/>    
 /// <reference path="components/CheckBox.ts"/>     
 /// <reference path="components/ComboBox.ts"/>     
