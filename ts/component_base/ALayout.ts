@@ -1,4 +1,4 @@
-module cubee {
+namespace cubee {
 
     export abstract class ALayout extends AComponent {
         private _children = new LayoutChildren(this);

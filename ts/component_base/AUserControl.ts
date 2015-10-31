@@ -1,4 +1,4 @@
-module cubee {
+namespace cubee {
 
     export abstract class AUserControl extends ALayout {
 

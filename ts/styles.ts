@@ -1,6 +1,6 @@
 
 
-module cubee {
+namespace cubee {
 
     export interface IStyle {
 

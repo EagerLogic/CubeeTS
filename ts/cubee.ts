@@ -12,7 +12,7 @@
 /// <reference path="layouts/HBox.ts"/>   
 /// <reference path="layouts/VBox.ts"/>    
 /// <reference path="layouts/ScrollBox.ts"/>    
-   
+    
 /// <reference path="components/Label.ts"/>  
 /// <reference path="components/Button.ts"/>    
 /// <reference path="components/TextBox.ts"/>    
@@ -33,7 +33,7 @@
 // EVENTS
 
 
-module cubee {                
+namespace cubee {                
 
     export class CubeePanel {        
 

@@ -1,4 +1,4 @@
-module cubee {
+namespace cubee {
     
     export class AView<T> extends AUserControl {
         

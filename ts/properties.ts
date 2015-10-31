@@ -1,6 +1,6 @@
 /// <reference path="events.ts"/>
 
-module cubee {
+namespace cubee {
 
     export interface IChangeListener {
         (sender?: Object): void;

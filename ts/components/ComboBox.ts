@@ -1,4 +1,4 @@
-module cubee {
+namespace cubee {
 
     export class ComboBox<T> extends AComponent {
 
