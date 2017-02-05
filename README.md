@@ -21,4 +21,4 @@ Cubee is a component based UI framework. Cubee contains the most basic component
 Cubee components has properties for styling. This allows you to use a type-safe environment while making your components looks great, but this also allows you to animate any style properties like background, color, or position.
 
 ## Read More
-On the other wiki pages you can find out more informations about Cubee and how to user it.
+On the wiki pages you can find out more informations about Cubee and how to user it.
