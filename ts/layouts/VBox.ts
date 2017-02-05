@@ -24,6 +24,7 @@ namespace cubee {
         setCellHeight(indexOrComponent: number | AComponent, cellHeight: number) {
             if (indexOrComponent instanceof AComponent) {
                 this.setCellHeight(this.children.indexOf(<AComponent>indexOrComponent), cellHeight);
+                return;
             }
             this.setInList(this._cellHeights, <number>indexOrComponent, cellHeight);
             this.requestLayout();
@@ -53,7 +54,7 @@ namespace cubee {
             if (indexOrComponent instanceof AComponent) {
                 return this.getCellHeight(this.children.indexOf(indexOrComponent));
             }
-            this.getFromList(this._cellHeights, <number>indexOrComponent);
+            return this.getFromList(this._cellHeights, <number>indexOrComponent);
         }
 
         public setCellHAlign(indexOrComponent: number | AComponent, hAlign: EHAlign) {
@@ -77,151 +78,151 @@ namespace cubee {
             }
             this.setInList(this._vAligns, <number>indexOrComponent, vAlign);
             this.requestLayout();
-    }
+        }
 
         public getCellVAlign(indexOrComponent: number | AComponent): EVAlign {
-        if (indexOrComponent instanceof AComponent) {
-            return this.getCellVAlign(this.children.indexOf(indexOrComponent));
-        }
-        this.getFromList(this._vAligns, <number>indexOrComponent);
-    }
-
-    public setLastCellHAlign(hAlign: EHAlign) {
-        this.setCellHAlign(this.children.size() - 1, hAlign);
-    }
-
-    public setLastCellVAlign(vAlign: EVAlign) {
-        this.setCellVAlign(this.children.size() - 1, vAlign);
-    }
-
-    public setLastCellHeight(height: number) {
-        this.setCellHeight(this.children.size() - 1, height);
-    }
-
-    public addEmptyCell(height: number) {
-        this.children.add(null);
-        this.setCellHeight(this.children.size() - 1, height);
-    }
-    
-    get Width() {
-        return this._width;
-    }
-    get width() {
-        return this.Width.value;
-    }
-    set width(value) {
-        this.Width.value = value;
-    }
-
-    public _onChildAdded(child: AComponent) {
-        if (child != null) {
-            this.element.appendChild(child.element);
-        }
-        this.requestLayout();
-    }
-
-    public _onChildRemoved(child: AComponent, index: number) {
-        if (child != null) {
-            this.element.removeChild(child.element);
-        }
-        this.removeFromList(this._hAligns, index);
-        this.removeFromList(this._vAligns, index);
-        this.removeFromList(this._cellHeights, index);
-        this.requestLayout();
-    }
-
-    public _onChildrenCleared() {
-        var root = this.element;
-        var e = this.element.firstElementChild;
-        while (e != null) {
-            root.removeChild(e);
-            e = root.firstElementChild;
-        }
-        this._hAligns = [];
-        this._vAligns = [];
-        this._cellHeights = [];
-        this.requestLayout();
-    }
-
-    protected onLayout() {
-        var maxWidth = -1;
-        if (this.width != null) {
-            maxWidth = this.width;
+            if (indexOrComponent instanceof AComponent) {
+                return this.getCellVAlign(this.children.indexOf(indexOrComponent));
+            }
+            this.getFromList(this._vAligns, <number>indexOrComponent);
         }
 
-        var actH = 0;
-        var maxW = 0;
-        for (var i = 0; i < this.children.size(); i++) {
-            let childY = 0;
-            let child = this.children.get(i);
-            let cellH = this.getCellHeight(i);
-            let vAlign = this.getCellVAlign(i);
-            let realCellH = -1;
-            if (cellH != null) {
-                realCellH = cellH;
+        public setLastCellHAlign(hAlign: EHAlign) {
+            this.setCellHAlign(this.children.size() - 1, hAlign);
+        }
+
+        public setLastCellVAlign(vAlign: EVAlign) {
+            this.setCellVAlign(this.children.size() - 1, vAlign);
+        }
+
+        public setLastCellHeight(height: number) {
+            this.setCellHeight(this.children.size() - 1, height);
+        }
+
+        public addEmptyCell(height: number) {
+            this.children.add(null);
+            this.setCellHeight(this.children.size() - 1, height);
+        }
+
+        get Width() {
+            return this._width;
+        }
+        get width() {
+            return this.Width.value;
+        }
+        set width(value) {
+            this.Width.value = value;
+        }
+
+        public _onChildAdded(child: AComponent) {
+            if (child != null) {
+                this.element.appendChild(child.element);
+            }
+            this.requestLayout();
+        }
+
+        public _onChildRemoved(child: AComponent, index: number) {
+            if (child != null) {
+                this.element.removeChild(child.element);
+            }
+            this.removeFromList(this._hAligns, index);
+            this.removeFromList(this._vAligns, index);
+            this.removeFromList(this._cellHeights, index);
+            this.requestLayout();
+        }
+
+        public _onChildrenCleared() {
+            var root = this.element;
+            var e = this.element.firstElementChild;
+            while (e != null) {
+                root.removeChild(e);
+                e = root.firstElementChild;
+            }
+            this._hAligns = [];
+            this._vAligns = [];
+            this._cellHeights = [];
+            this.requestLayout();
+        }
+
+        protected onLayout() {
+            var maxWidth = -1;
+            if (this.width != null) {
+                maxWidth = this.width;
             }
 
-            if (child == null) {
-                if (realCellH > 0) {
-                    actH += realCellH;
+            var actH = 0;
+            var maxW = 0;
+            for (var i = 0; i < this.children.size(); i++) {
+                let childY = 0;
+                let child = this.children.get(i);
+                let cellH = this.getCellHeight(i);
+                let vAlign = this.getCellVAlign(i);
+                let realCellH = -1;
+                if (cellH != null) {
+                    realCellH = cellH;
                 }
-            } else {
-                //child.layout();
+
+                if (child == null) {
+                    if (realCellH > 0) {
+                        actH += realCellH;
+                    }
+                } else {
+                    //child.layout();
+                    let cw = child.boundsWidth;
+                    let ch = child.boundsHeight;
+                    let cl = child.translateX;
+                    let ct = child.translateY;
+                    let calculatedCellH = realCellH;
+                    if (calculatedCellH < 0) {
+                        calculatedCellH = ch + ct;
+                    } else if (calculatedCellH < ch) {
+                        calculatedCellH = ch;
+                    }
+
+                    childY = actH - child.translateY;
+
+                    if (vAlign == EVAlign.MIDDLE) {
+                        childY += (calculatedCellH - ch) / 2;
+                    } else if (vAlign == EVAlign.BOTTOM) {
+                        childY += (calculatedCellH - ch);
+                    }
+                    child._setTop(childY);
+
+                    if (cw + cl > maxW) {
+                        maxW = cw + cl;
+                    }
+                    actH += calculatedCellH;
+                }
+            }
+
+            var realWidth = maxW;
+            if (maxWidth > -1) {
+                realWidth = maxWidth;
+            }
+            for (var i = 0; i < this.children.size(); i++) {
+                let childX = 0;
+                let child = this.children.get(i);
+                if (child == null) {
+                    continue;
+                }
+                let hAlign = this.getCellHAlign(i);
                 let cw = child.boundsWidth;
-                let ch = child.boundsHeight;
-                let cl = child.translateX;
-                let ct = child.translateY;
-                let calculatedCellH = realCellH;
-                if (calculatedCellH < 0) {
-                    calculatedCellH = ch + ct;
-                } else if (calculatedCellH < ch) {
-                    calculatedCellH = ch;
+                if (hAlign == EHAlign.CENTER) {
+                    childX = (realWidth - cw) / 2;
+                } else if (hAlign == EHAlign.RIGHT) {
+                    childX = (realWidth - cw);
                 }
 
-                childY = actH - child.translateY;
-
-                if (vAlign == EVAlign.MIDDLE) {
-                    childY += (calculatedCellH - ch) / 2;
-                } else if (vAlign == EVAlign.BOTTOM) {
-                    childY += (calculatedCellH - ch);
-                }
-                child._setTop(childY);
-
-                if (cw + cl > maxW) {
-                    maxW = cw + cl;
-                }
-                actH += calculatedCellH;
-            }
-        }
-
-        var realWidth = maxW;
-        if (maxWidth > -1) {
-            realWidth = maxWidth;
-        }
-        for (var i = 0; i < this.children.size(); i++) {
-            let childX = 0;
-            let child = this.children.get(i);
-            if (child == null) {
-                continue;
-            }
-            let hAlign = this.getCellHAlign(i);
-            let cw = child.boundsWidth;
-            if (hAlign == EHAlign.CENTER) {
-                childX = (realWidth - cw) / 2;
-            } else if (hAlign == EHAlign.RIGHT) {
-                childX = (realWidth - cw);
+                child._setLeft(childX);
             }
 
-            child._setLeft(childX);
+            this.setSize(realWidth, actH);
         }
 
-        this.setSize(realWidth, actH);
+
+
     }
 
-
-
-}
-    
 }
 
 

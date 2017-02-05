@@ -8,7 +8,8 @@ namespace cubee {
             FAIcon._initialized = true;
             var w: any = window;
             w.fastyle = document.createElement("link");
-            w.faststyle.href = "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css";
+            w.fastyle.href = "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css";
+            w.fastyle.rel = "stylesheet";
             document.getElementsByTagName("head")[0].appendChild(w.fastyle);
         }
 

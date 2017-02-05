@@ -9,11 +9,16 @@ namespace cubee {
         private _foreColor = new ColorProperty(Color.BLACK, true, false);
         private _textAlign = new Property<ETextAlign>(ETextAlign.LEFT, false, false);
         private _verticalAlign = new Property<EVAlign>(EVAlign.TOP, false, false);
-        private _bold = new BooleanProperty(false, false, false);
         private _italic = new BooleanProperty(false, false, false);
         private _underline = new BooleanProperty(false, false, false);
         private _fontSize = new NumberProperty(12, false, false);
         private _fontFamily = new Property<FontFamily>(FontFamily.Arial, false, false);
+        private _fontWeight = new Property<number>(400, false, false, { validate(value: number)  {
+            if (value < 901 && value > 1 && value % 100 == 0) {
+                return value;
+            }
+            return 400;
+        }});
 
         constructor() {
             super(document.createElement("div"));
@@ -91,15 +96,11 @@ namespace cubee {
                 this.requestLayout();
             });
             this._underline.invalidate();
-            this._bold.addChangeListener(() => {
-                if (this.bold) {
-                    this.element.style.fontWeight = "bold";
-                } else {
-                    this.element.style.fontWeight = "normal";
-                }
+            this._fontWeight.addChangeListener(() => {
+                this.element.style.fontWeight = "" + (this._fontWeight.value | 0);
                 this.requestLayout();
             });
-            this._bold.invalidate();
+            this._fontWeight.invalidate();
             this._italic.addChangeListener(() => {
                 if (this.italic) {
                     this.element.style.fontStyle = "italic";
@@ -183,14 +184,14 @@ namespace cubee {
             this.VerticalAlign.value = value;
         }
 
-        get Bold() {
-            return this._bold;
+        get FontWeight() {
+            return this._fontWeight;
         }
-        get bold() {
-            return this.Bold.value;
+        get fontWeight() {
+            return this.FontWeight.value;
         }
-        set bold(value) {
-            this.Bold.value = value;
+        set fontWeight(value) {
+            this.FontWeight.value = value;
         }
 
         get Italic() {

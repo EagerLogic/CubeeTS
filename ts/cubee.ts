@@ -22,6 +22,8 @@
 /// <reference path="components/CheckBox.ts"/>     
 /// <reference path="components/ComboBox.ts"/>     
 /// <reference path="components/PictureBox.ts"/>     
+/// <reference path="components/FAIcon.ts"/>     
+/// <reference path="components/EIcon.ts"/>     
 
 /// <reference path="popups.ts"/>  
 
