@@ -68,7 +68,7 @@ namespace cubee {
         }
 
         fireEvent(args: T) {
-            for (var l in this._listeners) {
+            for (var l of this._listeners) {
                 let listener: IEventListener<T> = l;
                 listener(args);
             }

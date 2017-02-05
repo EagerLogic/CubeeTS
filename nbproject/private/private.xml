@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
         <group name="CubeeTS">
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/public_html/main.ts</file>
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/component_base/AComponent.ts</file>
@@ -11,6 +10,10 @@
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/EIcon.ts</file>
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/FAIcon.ts</file>
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/PictureBox.ts</file>
+        </group>
+        <group>
+            <file>file:/D:/MUNKA/CubeeTS/public_html/index.html</file>
+            <file>file:/D:/MUNKA/CubeeTS/ts/rpc.ts</file>
         </group>
     </open-files>
 </project-private>

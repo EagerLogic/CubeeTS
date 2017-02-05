@@ -2,6 +2,7 @@
 /// <reference path="events.ts"/>
 /// <reference path="properties.ts"/>
 /// <reference path="styles.ts"/>
+/// <reference path="rpc.ts"/>
 /// <reference path="component_base/LayoutChildren.ts"/> 
 /// <reference path="component_base/AComponent.ts"/> 
 /// <reference path="component_base/ALayout.ts"/> 
