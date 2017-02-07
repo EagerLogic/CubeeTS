@@ -431,9 +431,19 @@ declare namespace cubee {
     }
 }
 declare namespace cubee {
-    function call<$P, $R>(url: string, method: string, param: $P, callback: RpcResult<$R>): void;
-    interface RpcResult<$R> {
-        (status: number, result: $R): void;
+    class Rpc {
+        static call<$P, $R>(url: string, method: string, param: $P, resultHandler: RpcResultHandler<$R>, errorHandler: RpcErrorHandler): void;
+    }
+    interface RpcResultHandler<$R> {
+        (result: $R): void;
+    }
+    interface RpcErrorHandler {
+        (error: RpcError): void;
+    }
+    class RpcError {
+        status: number;
+        message: string;
+        constructor(status: number, message: string);
     }
 }
 declare namespace cubee {
@@ -691,6 +701,10 @@ declare namespace cubee {
         protected shadowProperty(): Property<BoxShadow>;
         readonly Shadow: Property<BoxShadow>;
         shadow: BoxShadow;
+        readonly Padding: PaddingProperty;
+        padding: Padding;
+        readonly Border: BorderProperty;
+        border: Border;
         readonly children: LayoutChildren;
     }
 }
@@ -904,8 +918,13 @@ declare namespace cubee {
         height: number;
         readonly Text: StringProperty;
         text: string;
+        protected backgroundProperty(): BackgroundProperty;
         readonly Background: BackgroundProperty;
         background: ABackground;
+        readonly Padding: PaddingProperty;
+        padding: Padding;
+        readonly Border: BorderProperty;
+        border: Border;
         readonly ForeColor: ColorProperty;
         foreColor: Color;
         readonly TextAlign: Property<ETextAlign>;
@@ -948,8 +967,13 @@ declare namespace cubee {
         height: number;
         readonly Text: StringProperty;
         text: string;
+        protected backgroundProperty(): BackgroundProperty;
         readonly Background: BackgroundProperty;
         background: ABackground;
+        readonly Padding: PaddingProperty;
+        padding: Padding;
+        readonly Border: BorderProperty;
+        border: Border;
         readonly ForeColor: ColorProperty;
         foreColor: Color;
         readonly TextAlign: Property<ETextAlign>;
@@ -992,8 +1016,13 @@ declare namespace cubee {
         height: number;
         readonly Text: StringProperty;
         text: string;
+        protected backgroundProperty(): BackgroundProperty;
         readonly Background: BackgroundProperty;
         background: ABackground;
+        readonly Padding: PaddingProperty;
+        padding: Padding;
+        readonly Border: BorderProperty;
+        border: Border;
         readonly ForeColor: ColorProperty;
         foreColor: Color;
         readonly TextAlign: Property<ETextAlign>;

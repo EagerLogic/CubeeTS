@@ -54,6 +54,10 @@ namespace cubee {
             }, this._center, this._popupRoot.ClientHeight, this._translateY,
                 this._rootComponentContainer.BoundsHeight));
             this._popupRoot.children.add(this._rootComponentContainer);
+            
+            this._rootComponentContainer.onClick.addListener((evt) => {
+                evt.stopPropagation();
+            });
 
             if (autoClose) {
                 this._popupRoot.onClick.addListener(() => {

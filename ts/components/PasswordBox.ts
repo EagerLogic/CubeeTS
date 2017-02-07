@@ -151,14 +151,38 @@ namespace cubee {
             this.Text.value = value;
         }
 
-        get Background() {
+        protected backgroundProperty() {
             return this._background;
+        }
+        get Background() {
+            return this.backgroundProperty();
         }
         get background() {
             return this.Background.value;
         }
         set background(value) {
             this.Background.value = value;
+        }
+
+
+        get Padding() {
+            return this.paddingProperty();
+        }
+        get padding() {
+            return this.Padding.value;
+        }
+        set padding(value) {
+            this.Padding.value = value;
+        }
+
+        get Border() {
+            return this.borderProperty();
+        }
+        get border() {
+            return this.Border.value;
+        }
+        set border(value) {
+            this.Border.value = value;
         }
 
         get ForeColor() {

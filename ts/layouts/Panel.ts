@@ -56,6 +56,26 @@ namespace cubee {
         set shadow(value) {
             this.Shadow.value = value;
         }
+        
+        get Padding() {
+            return this.paddingProperty();
+        }
+        get padding() {
+            return this.Padding.value;
+        }
+        set padding(value) {
+            this.Padding.value = value;
+        }
+
+        get Border() {
+            return this.borderProperty();
+        }
+        get border() {
+            return this.Border.value;
+        }
+        set border(value) {
+            this.Border.value = value;
+        }
 
         
         public get children() {
