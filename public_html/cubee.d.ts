@@ -773,7 +773,7 @@ declare namespace cubee {
 }
 declare namespace cubee {
     class ScrollBox extends AUserControl {
-        private _content;
+        private readonly _content;
         private _hScrollPolicy;
         private _vScrollPolicy;
         private _scrollWidth;

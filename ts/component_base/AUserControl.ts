@@ -169,10 +169,24 @@ namespace cubee {
 
                 if (this.width != null) {
                     maxW = this.height;
+                } else {
+                    if (this.padding != null) {
+                        maxW += this.padding.left + this.padding.right;
+                    }
+                    if (this.border != null) {
+                        maxW += this.border.leftWidth + this.border.rightWidth;
+                    }
                 }
 
                 if (this.height != null) {
                     maxH = this.height;
+                } else {
+                    if (this.padding != null) {
+                        maxH += this.padding.top + this.padding.bottom;
+                    }
+                    if (this.border != null) {
+                        maxH += this.border.topWidth + this.border.bottomWidth;
+                    }
                 }
 
                 this.setSize(maxW, maxH);
