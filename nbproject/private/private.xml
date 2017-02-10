@@ -11,16 +11,6 @@
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/FAIcon.ts</file>
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/PictureBox.ts</file>
         </group>
-        <group>
-            <file>file:/D:/MUNKA/CubeeTS/ts/layouts/Panel.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/components/PasswordBox.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/components/TextBox.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/components/TextArea.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/events.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/popups.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/rpc.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/component_base/AUserControl.ts</file>
-            <file>file:/D:/MUNKA/CubeeTS/ts/component_base/AComponent.ts</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

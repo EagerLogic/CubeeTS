@@ -19,6 +19,7 @@ namespace cubee {
         public setCellWidth(indexOrComponent: number | AComponent, cellHeight: number) {
             if (indexOrComponent instanceof AComponent) {
                 this.setCellWidth(this.children_inner.indexOf(indexOrComponent), cellHeight);
+                return;
             }
             this.setInList(this._cellWidths, <number>indexOrComponent, cellHeight);
             this.requestLayout();

@@ -7,8 +7,8 @@ namespace cubee {
         private _vScrollPolicy = new Property<EScrollBarPolicy>(EScrollBarPolicy.AUTO, false);
         private _scrollWidth = new NumberProperty(0, false, true);
         private _scrollHeight = new NumberProperty(0, false, true);
-        private _hScrollPos = new NumberProperty(0, false, true);
-        private _vScrollPos = new NumberProperty(0, false, true);
+        private _hScrollPos = new NumberProperty(0, false, false);
+        private _vScrollPos = new NumberProperty(0, false, false);
         private _maxHScrollPos = new NumberProperty(0, false, true);
         private _maxVScrollPos = new NumberProperty(0, false, true);
         private _maxHScrollPosWriter = new NumberProperty(0, false, false);

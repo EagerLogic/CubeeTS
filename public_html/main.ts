@@ -12,9 +12,9 @@ function start() {
 
     var vb = new cubee.HBox();
 
-    vb.children.add(createP(cubee.Color.getRgbColor(0xff0000)));
-    vb.children.add(createP(cubee.Color.getRgbColor(0x00ff00)));
-    vb.children.add(createP(cubee.Color.getRgbColor(0x0000ff)));
+    vb.children.add(createP(cubee.Color.rgb(0xff0000)));
+    vb.children.add(createP(cubee.Color.rgb(0x00ff00)));
+    vb.children.add(createP(cubee.Color.rgb(0x0000ff)));
 
     cp.rootComponent = vb;
 }

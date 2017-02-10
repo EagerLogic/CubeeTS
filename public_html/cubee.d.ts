@@ -208,6 +208,7 @@ declare namespace cubee {
     }
     class Timeline extends AAnimator {
         private keyFrames;
+        static createSimple<$T>(property: Property<$T>, startValue: $T, endValue: $T, intervalMs: number): Timeline;
         private propertyLines;
         private repeatCount;
         private finishedEvent;
@@ -238,6 +239,10 @@ declare namespace cubee {
     }
     class ColorProperty extends Property<Color> {
     }
+    class Animator {
+        static animateConditionally<$T>(property: Property<$T>, condition: IProperty<boolean>, trueValue: $T, falseValue: $T, intervalMs: number): void;
+        private constructor();
+    }
 }
 declare namespace cubee {
     interface IStyle {
@@ -255,10 +260,10 @@ declare namespace cubee {
         static readonly BLACK: Color;
         private static _LIGHT_GRAY;
         static readonly LIGHT_GRAY: Color;
-        static getArgbColor(argb: number): Color;
-        static getArgbColorByComponents(alpha: number, red: number, green: number, blue: number): Color;
-        static getRgbColor(rgb: number): Color;
-        static getRgbColorByComponents(red: number, green: number, blue: number): Color;
+        static argb(argb: number): Color;
+        static argb2(alpha: number, red: number, green: number, blue: number): Color;
+        static rgb(rgb: number): Color;
+        static rgb2(red: number, green: number, blue: number): Color;
         private static fixComponent(component);
         static fadeColors(startColor: Color, endColor: Color, fadePosition: number): Color;
         private static mixComponent(startValue, endValue, pos);

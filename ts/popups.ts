@@ -16,7 +16,7 @@ namespace cubee {
 
         private _visible = false;
 
-        constructor(modal: boolean = true, autoClose: boolean = true, glassColor = Color.getArgbColor(0x00000000)) {
+        constructor(modal: boolean = true, autoClose: boolean = true, glassColor = Color.argb(0x00000000)) {
             this._modal = modal;
             this._autoClose = autoClose;
             this._glassColor = glassColor;

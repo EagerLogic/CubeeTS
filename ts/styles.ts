@@ -16,37 +16,37 @@ namespace cubee {
 
     export class Color {
 
-        private static _TRANSPARENT = Color.getArgbColor(0x00000000);
+        private static _TRANSPARENT = Color.argb(0x00000000);
         static get TRANSPARENT() {
             return Color._TRANSPARENT;
         }
 
-        private static _WHITE = Color.getArgbColor(0xffffffff);
+        private static _WHITE = Color.argb(0xffffffff);
         static get WHITE() {
             return Color._WHITE;
         }
 
-        private static _BLACK = Color.getArgbColor(0xff000000);
+        private static _BLACK = Color.argb(0xff000000);
         static get BLACK() {
             return Color._BLACK;
         }
 
-        private static _LIGHT_GRAY = Color.getArgbColor(0xffcccccc);
+        private static _LIGHT_GRAY = Color.argb(0xffcccccc);
         static get LIGHT_GRAY() {
             return Color._LIGHT_GRAY;
         }
 
-        public static getArgbColor(argb: number): Color {
+        public static argb(argb: number): Color {
             return new Color(argb);
         }
 
-        public static getArgbColorByComponents(alpha: number, red: number, green: number, blue: number) {
+        public static argb2(alpha: number, red: number, green: number, blue: number) {
             alpha = this.fixComponent(alpha);
             red = this.fixComponent(red);
             green = this.fixComponent(green);
             blue = this.fixComponent(blue);
 
-            return this.getArgbColor(
+            return this.argb(
                 alpha << 24
                 | red << 16
                 | green << 8
@@ -54,12 +54,12 @@ namespace cubee {
             );
         }
 
-        public static getRgbColor(rgb: number) {
-            return this.getArgbColor(rgb | 0xff000000);
+        public static rgb(rgb: number) {
+            return this.argb(rgb | 0xff000000);
         }
 
-        public static getRgbColorByComponents(red: number, green: number, blue: number) {
-            return this.getArgbColorByComponents(255, red, green, blue);
+        public static rgb2(red: number, green: number, blue: number) {
+            return this.argb2(255, red, green, blue);
         }
 
         private static fixComponent(component: number) {
@@ -76,7 +76,7 @@ namespace cubee {
         }
 
         public static fadeColors(startColor: Color, endColor: Color, fadePosition: number) {
-            return Color.getArgbColorByComponents(
+            return Color.argb2(
                 this.mixComponent(startColor.alpha, endColor.alpha, fadePosition),
                 this.mixComponent(startColor.red, endColor.red, fadePosition),
                 this.mixComponent(startColor.green, endColor.green, fadePosition),

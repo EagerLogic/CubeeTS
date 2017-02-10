@@ -138,6 +138,7 @@ namespace cubee {
                     this._shadow.value.apply(this.element);
                 }
             });
+            this._shadow.invalidate();
             
             this.border = Border.create(1, Color.LIGHT_GRAY, 2);
             this.fontSize = 14;
