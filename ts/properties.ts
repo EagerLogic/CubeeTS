@@ -621,6 +621,10 @@ namespace cubee {
     }
 
     export class Timeline extends AAnimator {
+        
+        public static createSimple<$T>(property: Property<$T>, startValue: $T, endValue: $T, intervalMs: number) {
+            return new Timeline([new KeyFrame(0, property, startValue), new KeyFrame(intervalMs, property, endValue)]);
+        }
 
 
         private propertyLines: PropertyLine<any>[] = [];
@@ -755,6 +759,33 @@ namespace cubee {
     
     export class ColorProperty extends Property<Color> {
 
+    }
+    
+    export class Animator {
+        
+        public static animateConditionally<$T>(property: Property<$T>, condition: IProperty<boolean>, trueValue: $T, falseValue: $T, intervalMs: number) {
+            var tlToTrue = Timeline.createSimple(property, falseValue, trueValue, intervalMs);
+            var tlToFalse = Timeline.createSimple(property, trueValue, falseValue, intervalMs);
+            condition.addChangeListener(() => {
+                if (condition.getObjectValue()) {
+                    tlToFalse.stop();
+                    tlToTrue.stop();
+                    tlToTrue.start();
+                } else {
+                    tlToFalse.stop();
+                    tlToTrue.stop();
+                    tlToFalse.start();
+                }
+            });
+            if (condition.getObjectValue()) {
+                property.value = trueValue;
+            } else {
+                property.value = falseValue;
+            }
+        }
+        
+        private constructor() {}
+        
     }
 
 }
