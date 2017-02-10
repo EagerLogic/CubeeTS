@@ -2,7 +2,7 @@ namespace cubee {
 
     export class ScrollBox extends AUserControl {
 
-        private _content = new Property<AComponent>(null);
+        private readonly _content = new Property<AComponent>(null);
         private _hScrollPolicy = new Property<EScrollBarPolicy>(EScrollBarPolicy.AUTO, false);
         private _vScrollPolicy = new Property<EScrollBarPolicy>(EScrollBarPolicy.AUTO, false);
         private _scrollWidth = new NumberProperty(0, false, true);
@@ -49,20 +49,21 @@ namespace cubee {
                 this.children_inner.clear();
                 this._calculateScrollWidthExp.unbindAll();
                 this._calculateScrollWidthExp.bind(this._content);
-                if (this.content != null) {
-                    this._calculateScrollWidthExp.bind(this.content.BoundsWidth);
+                if (this._content.value != null) {
+                    this._calculateScrollWidthExp.bind(this._content.value.BoundsWidth);
                 }
 
                 this._calculateScrollHeightExp.unbindAll();
                 this._calculateScrollHeightExp.bind(this._content);
-                if (this.content != null) {
-                    this._calculateScrollHeightExp.bind(this.content.BoundsHeight);
+                if (this._content.value != null) {
+                    this._calculateScrollHeightExp.bind(this._content.value.BoundsHeight);
                 }
 
-                if (this.content != null) {
-                    this.children_inner.add(this.content);
+                if (this._content.value != null) {
+                    this.children_inner.add(this._content.value);
                 }
             });
+            this.Content.invalidate();
 
             this.element.addEventListener("scroll", (evt) => {
                 this.hScrollPos = this.element.scrollLeft;
@@ -72,9 +73,11 @@ namespace cubee {
             this._hScrollPos.addChangeListener(() => {
                 this.element.scrollLeft = this.hScrollPos;
             });
-            this._hScrollPos.addChangeListener(() => {
+            this._hScrollPos.invalidate();
+            this._vScrollPos.addChangeListener(() => {
                 this.element.scrollTop = this.vScrollPos;
             });
+            this._vScrollPos.invalidate();
 
             this._hScrollPolicy.addChangeListener(() => {
                 if (this.hScrollPolicy == EScrollBarPolicy.AUTO) {

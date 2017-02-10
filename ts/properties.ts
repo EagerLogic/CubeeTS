@@ -193,7 +193,7 @@ namespace cubee {
             if (idx < 0) {
                 return;
             }
-            this._changeListeners.splice(idx);
+            this._changeListeners.splice(idx, 1);
         }
 
         hasChangeListener(listener: IChangeListener): boolean {
