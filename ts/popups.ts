@@ -26,6 +26,7 @@ namespace cubee {
             this._popupRoot.element.style.right = "0px";
             this._popupRoot.element.style.bottom = "0px";
             this._popupRoot.element.style.position = "fixed";
+            this._popupRoot.element.style.overflow = "auto";
             if (glassColor != null) {
                 this._popupRoot.background = new ColorBackground(glassColor);
             }
@@ -39,18 +40,24 @@ namespace cubee {
             this._rootComponentContainer = new Panel();
             this._rootComponentContainer.TranslateX.bind(new Expression<number>(() => {
                 var baseX = 0;
-                if (this._center.value) {
-                    baseX = (this._popupRoot.clientWidth - this._rootComponentContainer.boundsWidth) / 2;
+                if (this._popupRoot.clientWidth > this._rootComponentContainer.boundsWidth) {
+                    if (this._center.value) {
+                        baseX = (this._popupRoot.clientWidth - this._rootComponentContainer.boundsWidth) / 2;
+                    }
+                    baseX += this._translateX.value;
                 }
-                return baseX + this._translateX.value;
+                return baseX;
             }, this._center, this._popupRoot.ClientWidth, this._translateX,
                 this._rootComponentContainer.BoundsWidth));
             this._rootComponentContainer.TranslateY.bind(new Expression<number>(() => {
                 var baseY = 0;
-                if (this._center.value) {
-                    baseY = (this._popupRoot.clientHeight - this._rootComponentContainer.boundsHeight) / 2;
+                if (this._popupRoot.clientHeight > this._rootComponentContainer.boundsHeight) {
+                    if (this._center.value) {
+                        baseY = (this._popupRoot.clientHeight - this._rootComponentContainer.boundsHeight) / 2;
+                    }
+                    baseY += this._translateY.value;
                 }
-                return baseY + this._translateY.value;
+                return baseY;
             }, this._center, this._popupRoot.ClientHeight, this._translateY,
                 this._rootComponentContainer.BoundsHeight));
             this._popupRoot.children.add(this._rootComponentContainer);

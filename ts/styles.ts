@@ -493,6 +493,11 @@ namespace cubee {
         static get AUTO() {
             return ECursor.auto;
         }
+        
+        private static pointer = new ECursor("pointer");
+        static get POINTER() {
+            return ECursor.pointer;
+        }
 
         constructor(private _css: string) { }
 

@@ -38,8 +38,8 @@ namespace cubee {
                 this.requestLayout();
             });
             this._text.addChangeListener(() => {
-                if (this.text != this.element.getAttribute("value")) {
-                    this.element.setAttribute("value", this.text);
+                if (this.text != this.element.innerHTML) {
+                    this.element.innerHTML = this.text;
                 }
             });
             this._foreColor.addChangeListener(() => {
@@ -118,6 +118,10 @@ namespace cubee {
                 } else {
                     this.element.setAttribute("placeholder", this.placeholder);
                 }
+            });
+            
+            this.element.addEventListener("input", () => {
+                this.text = (<HTMLInputElement>this.element).value;
             });
         }
 

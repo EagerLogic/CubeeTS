@@ -12,6 +12,10 @@ namespace cubee {
                 var e: any = this.element;
                 e.checked = this.checked;
             });
+            
+            this.element.addEventListener("change", () => {
+                this.checked = (<HTMLInputElement>this.element).checked;
+            });
         }
         
         get Checked() {

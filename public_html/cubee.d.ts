@@ -403,6 +403,8 @@ declare namespace cubee {
         private _css;
         private static auto;
         static readonly AUTO: ECursor;
+        private static pointer;
+        static readonly POINTER: ECursor;
         constructor(_css: string);
         readonly css: string;
     }
@@ -899,6 +901,10 @@ declare namespace cubee {
         background: ABackground;
         readonly Shadow: Property<BoxShadow>;
         shadow: BoxShadow;
+        readonly Padding: PaddingProperty;
+        padding: Padding;
+        readonly Border: BorderProperty;
+        border: Border;
     }
 }
 declare namespace cubee {
@@ -2549,6 +2555,35 @@ declare namespace cubee {
         static _requestLayout(): void;
         private static layout();
         constructor();
+    }
+}
+declare namespace cubee {
+    abstract class ATreeItem extends AUserControl {
+    }
+}
+declare namespace cubee {
+    class FolderTreeItem extends AUserControl {
+    }
+}
+declare namespace cubee {
+    class LeafTreeItem extends AUserControl {
+    }
+}
+declare namespace cubee {
+    class TreView extends AUserControl {
+    }
+}
+declare namespace cubee {
+    class HSplitPanel extends AUserControl {
+        private leftPanel;
+        private rightPanel;
+    }
+    class VSplitPanel extends AUserControl {
+    }
+    class SplitPanelContainer extends AUserControl {
+        static create(): SplitPanelContainer;
+        private constructor();
+        readonly children: LayoutChildren;
     }
 }
 declare namespace cubee {

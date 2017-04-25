@@ -12,5 +12,9 @@
             <file>file:/D:/MUNKA/Eagerlogic/CubeeTS/ts/components/PictureBox.ts</file>
         </group>
         <group/>
+        <group name="Csini">
+            <file>file:/D:/MUNKA/CubeeTS/ts/rpc.ts</file>
+            <file>file:/D:/MUNKA/CubeeTS/ts/component_base/AComponent.ts</file>
+        </group>
     </open-files>
 </project-private>

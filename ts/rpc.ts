@@ -16,6 +16,8 @@ namespace cubee {
                         var json = this.responseText;
                         var result: $R = JSON.parse(json);
                         resultHandler(result);
+                    } else if (this.status > 200 && this.status < 300) {
+                        resultHandler(null);
                     } else {
                         var json = this.responseText;
                         var errObj = JSON.parse(json);
@@ -29,6 +31,7 @@ namespace cubee {
                 }
             }
             req.open(method, url);
+            req.setRequestHeader("Content-Type", "application/json");
             if (param != null) {
                 req.send(JSON.stringify(param));
             } else {

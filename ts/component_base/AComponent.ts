@@ -287,7 +287,7 @@ namespace cubee {
             var sY = this._scaleY.value.toString();
 
             this._element.style.transformOrigin = centerX + " " + centerY;
-            this._element.style.transform = "translate(" + this._translateX.value + "px, " + this._translateY.value
+            this._element.style.transform = "translate(" + (this._translateX.value | 0) + "px, " + (this._translateY.value | 0)
             + "px) rotate(" + angleStr + ") scaleX( " + sX + ") scaleY(" + sY + ")";
             this._element.style.backfaceVisibility = "hidden";
         }

@@ -25,7 +25,13 @@
 /// <reference path="components/FAIcon.ts"/>     
 /// <reference path="components/EIcon.ts"/>     
 
-/// <reference path="popups.ts"/>  
+/// <reference path="popups.ts"/>
+
+/// <reference path="components/treeview/ATreeItem.ts"/>  
+/// <reference path="components/treeview/FolderTreeItem.ts"/>  
+/// <reference path="components/treeview/LeafTreeItem.ts"/> 
+/// <reference path="components/treeview/TreeView.ts"/>  
+/// <reference path="layouts/SplitPanel.ts"/>
 
 // html component
 // hyperlink
