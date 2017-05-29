@@ -38,8 +38,8 @@ namespace cubee {
                 this.requestLayout();
             });
             this._text.addChangeListener(() => {
-                if (this.text != this.element.innerHTML) {
-                    this.element.innerHTML = this.text;
+                if (this.text != (<HTMLInputElement>this.element).value) {
+                    (<HTMLInputElement>this.element).value = this.text;
                 }
             });
             this._foreColor.addChangeListener(() => {

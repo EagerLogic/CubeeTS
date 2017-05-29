@@ -131,10 +131,10 @@ namespace cubee {
                 }
             }
             
-            this.element.style.left = cx + "px";
-            this.element.style.top = cy + "px";
-            this.element.style.width = cw + "px";
-            this.element.style.height = ch + "px";
+            this._imgElement.style.left = cx + "px";
+            this._imgElement.style.top = cy + "px";
+            this._imgElement.style.width = cw + "px";
+            this._imgElement.style.height = ch + "px";
             this.requestLayout();
         }
 

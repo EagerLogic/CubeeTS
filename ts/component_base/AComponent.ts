@@ -198,16 +198,16 @@ namespace cubee {
             });
             this._handlePointer.addChangeListener(() => {
                 if (!this._handlePointer.value || this._pointerTransparent.value) {
-                    this._element.style.setProperty("pointerEvents", "none");
+                    this._element.style.pointerEvents = "none";
                 } else {
-                    this._element.style.removeProperty("pointerEvents");
+                    this._element.style.pointerEvents = "all";
                 }
             });
             this._pointerTransparent.addChangeListener(() => {
                 if (!this._handlePointer.value || this._pointerTransparent.value) {
-                    this._element.style.setProperty("pointerEvents", "none");
+                    this._element.style.pointerEvents = "none";
                 } else {
-                    this._element.style.removeProperty("pointerEvents");
+                    this._element.style.pointerEvents = "all";
                 }
             });
 

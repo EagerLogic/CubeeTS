@@ -29,6 +29,39 @@ namespace cubee {
         }
 
     }
+    
+    export class CheckBoxWithTitle extends AUserControl {
+        
+        private hb: HBox;
+        private _checkBox: CheckBox;
+        private _label: Label;
+        
+        constructor() {
+            super();
+            
+            this.hb = new HBox();
+            this.children_inner.add(this.hb);
+            
+            this._checkBox = new CheckBox();
+            this.hb.children.add(this._checkBox);
+            this.hb.setLastCellVAlign(EVAlign.MIDDLE);
+            
+            this.hb.addEmptyCell(10);
+            
+            this._label = new Label();
+            this.hb.children.add(this._label);
+            this.hb.setLastCellVAlign(EVAlign.MIDDLE);
+        }
+        
+        get checkBox() {
+            return this._checkBox;
+        }
+        
+        get label() {
+            return this._label;
+        }
+        
+    }
 
 }
 

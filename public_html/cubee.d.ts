@@ -1061,6 +1061,14 @@ declare namespace cubee {
         readonly Checked: BooleanProperty;
         checked: boolean;
     }
+    class CheckBoxWithTitle extends AUserControl {
+        private hb;
+        private _checkBox;
+        private _label;
+        constructor();
+        readonly checkBox: CheckBox;
+        readonly label: Label;
+    }
 }
 declare namespace cubee {
     class ComboBox<T> extends AComponent {
