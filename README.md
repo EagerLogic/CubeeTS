@@ -1,4 +1,4 @@
-#CubeeTS
+# CubeeTS
 
 CubeeTS is a UI API written in TypeScript. You can use it to create cutting edge user interfaces.
 
